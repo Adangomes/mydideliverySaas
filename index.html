@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cardápio Digital</title>
+    <title>Cardápio Digital Profissional</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
@@ -14,69 +14,60 @@
     <style>
         :root { --primary: #e74c3c; --dark: #2c3e50; --success: #27ae60; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: #fff; color: #333; padding-bottom: 100px; }
+        body { background: #fff; padding-bottom: 100px; }
 
-        /* ADMIN BAR */
+        /* PAINEL ADMIN */
         .area-admin { display: none; background: #1a252f; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1100; color: white; }
-        .btn-adm { padding: 8px 12px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; margin: 3px; font-size: 12px; }
-        .btn-save { background: #3498db; border: 2px solid #fff; }
+        .btn-adm { padding: 8px 15px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; margin: 5px; }
 
-        /* HEADER ESTILO BEST DELIVERY */
-        header { padding: 20px; border-bottom: 1px solid #eee; position: sticky; top: 0; background: white; z-index: 1000; }
-        .header-content { display: flex; align-items: center; gap: 15px; max-width: 800px; margin: 0 auto; position: relative; }
-        #loja-logo { width: 55px; height: 55px; border-radius: 12px; object-fit: cover; background: #f0f0f0; }
-        .user-access { position: absolute; right: 0; background: #f4f4f4; border: none; width: 40px; height: 40px; border-radius: 10px; color: #888; cursor: pointer; }
+        header { padding: 25px 20px; border-bottom: 1px solid #eee; background: white; text-align: center; }
+        .header-content { max-width: 800px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
+        #loja-logo { width: 80px; height: 80px; border-radius: 20px; object-fit: cover; background: #f0f0f0; margin-bottom: 10px; }
+        .user-access { position: absolute; right: 0; top: 0; background: #f4f4f4; border: none; width: 40px; height: 40px; border-radius: 10px; color: #888; cursor: pointer; }
 
-        /* CATEGORIAS */
-        .categorias-nav { display: flex; overflow-x: auto; padding: 15px; gap: 10px; background: #fff; border-bottom: 1px solid #eee; position: sticky; top: 96px; z-index: 999; }
-        .categorias-nav::-webkit-scrollbar { display: none; }
-        .cat-item { background: #f4f4f4; padding: 6px 15px; border-radius: 20px; font-size: 13px; font-weight: 600; color: #666; white-space: nowrap; text-decoration: none; }
-        .cat-item.active { background: var(--primary); color: #fff; }
+        .categorias-nav { display: flex; overflow-x: auto; padding: 15px; gap: 10px; background: #fff; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 999; }
+        .cat-item { background: #f4f4f4; padding: 8px 20px; border-radius: 25px; font-size: 14px; font-weight: 600; color: #666; text-decoration: none; white-space: nowrap; }
 
-        /* LISTA PRODUTOS */
         .container { max-width: 800px; margin: 0 auto; padding: 15px; }
-        .section-title { font-size: 18px; font-weight: 700; margin: 20px 0 10px; color: var(--dark); }
-        .card-produto { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #f5f5f5; cursor: pointer; transition: 0.2s; }
-        .card-produto:active { background: #fafafa; }
+        .section-title { font-size: 1.2rem; font-weight: 700; margin: 25px 0 15px; color: var(--dark); border-left: 4px solid var(--primary); padding-left: 10px; }
+        
+        .card-produto { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #f9f9f9; align-items: center; }
         .prod-info { flex: 1; padding-right: 15px; }
-        .prod-info h3 { font-size: 15px; color: #333; margin-bottom: 4px; }
-        .prod-info p { font-size: 12px; color: #888; line-height: 1.4; margin-bottom: 8px; }
-        .prod-price { font-weight: 700; color: #333; font-size: 14px; }
-        .prod-img img { width: 95px; height: 95px; border-radius: 12px; object-fit: cover; background: #f9f9f9; }
+        .prod-info h3 { font-size: 1rem; color: #333; }
+        .prod-info p { font-size: 0.85rem; color: #888; margin: 5px 0; }
+        .prod-price { font-weight: 700; color: var(--dark); }
 
-        /* MODO EDIÇÃO VISUAL */
-        .editando { border: 1px dashed var(--primary) !important; background: #fffde7 !important; }
+        .prod-img img { width: 100px; height: 100px; border-radius: 15px; object-fit: cover; background: #f9f9f9; }
 
-        #btn-floating-cart { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: var(--primary); color: white; padding: 15px; border-radius: 50px; display: flex; justify-content: space-between; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.2); cursor: pointer; z-index: 1000; }
+        /* EDIÇÃO */
+        .admin-only { display: none; margin-top: 10px; background: #f9f9f9; padding: 10px; border-radius: 8px; border: 1px solid #ddd; }
+        .edit-active { display: block !important; }
+
+        #btn-carrinho { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 450px; background: var(--primary); color: white; padding: 18px; border-radius: 50px; display: flex; justify-content: space-between; font-weight: bold; box-shadow: 0 10px 20px rgba(0,0,0,0.1); cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div id="area-admin" class="area-admin">
-        <button class="btn-adm" style="background:var(--success); color:white" onclick="adicionarNovoProduto()">+ PRODUTO</button>
-        <button class="btn-adm" style="background:#666; color:white" onclick="novaCategoria()">+ CATEGORIA</button>
-        <button class="btn-adm btn-save" onclick="salvarFirebase()">SALVAR ALTERAÇÕES</button>
+        <button class="btn-adm" style="background:var(--success); color:white" onclick="novoProduto()">+ Produto</button>
+        <button class="btn-adm" style="background:#3498db; color:white" onclick="novaCategoria()">+ Nova Categoria</button>
+        <button class="btn-adm" style="background:white; color:black" onclick="salvarTudo()">SALVAR TUDO</button>
         <input type="file" id="upload-file" style="display:none" onchange="processarUpload(event)">
     </div>
 
     <header>
         <div class="header-content">
             <img id="loja-logo" onclick="acionarUpload('logo')" src="" alt="Logo">
-            <div>
-                <h1 id="nome-loja" contenteditable="false">...</h1>
-                <p id="rua-loja" style="font-size:12px; color:#999" contenteditable="false">...</p>
-            </div>
+            <h1 id="nome-loja">Carregando...</h1>
             <button class="user-access" onclick="loginAdmin()"><i class="fa fa-user-circle"></i></button>
         </div>
     </header>
 
     <div class="categorias-nav" id="cat-nav"></div>
 
-    <main class="container" id="lista-produtos">
-        <p style="text-align:center; padding:40px;">Carregando cardápio...</p>
-    </main>
+    <main class="container" id="lista-produtos"></main>
 
-    <div id="btn-floating-cart" onclick="verCarrinho()">
+    <div id="btn-carrinho">
         <span>🛒 <span id="cart-count">0</span> Itens</span>
         <span id="cart-total">R$ 0,00</span>
     </div>
@@ -100,23 +91,17 @@
         let modoEdicao = false;
         let uploadRef = null;
 
-        async function carregarDados() {
-            if(!LOJA_ID) {
-                document.body.innerHTML = "<h1>Erro: Loja não especificada na URL</h1>";
-                return;
-            }
+        async function init() {
+            if(!LOJA_ID) return document.body.innerHTML = "ID da loja ausente.";
             db.ref(`lojas/${LOJA_ID}`).on('value', snap => {
                 dadosLoja = snap.val();
-                if(dadosLoja) renderizar();
-                else document.body.innerHTML = "<h1>Loja não encontrada!</h1>";
+                render();
             });
         }
 
-        function renderizar() {
-            // Evitar undefined
-            document.getElementById('nome-loja').innerText = dadosLoja.config?.nomeLoja || "Minha Loja";
-            document.getElementById('loja-logo').src = dadosLoja.config?.logo || "";
-            document.getElementById('rua-loja').innerText = dadosLoja.config?.rua || "Endereço não configurado";
+        function render() {
+            document.getElementById('nome-loja').innerText = dadosLoja.config.nomeLoja;
+            document.getElementById('loja-logo').src = dadosLoja.config.logo;
 
             const container = document.getElementById('lista-produtos');
             const nav = document.getElementById('cat-nav');
@@ -124,24 +109,32 @@
             nav.innerHTML = "";
 
             const produtos = dadosLoja.produtos || [];
-            const categorias = [...new Set(produtos.map(p => p.categoria || "Outros"))];
+            // Lista única de categorias para o filtro e para o select de edição
+            const categorias = [...new Set(produtos.map(p => p.categoria || "Geral"))];
 
             categorias.forEach(cat => {
                 nav.innerHTML += `<a href="#${cat}" class="cat-item">${cat}</a>`;
                 container.innerHTML += `<div class="section-title" id="${cat}">${cat}</div>`;
 
                 produtos.forEach((p, i) => {
-                    if(p.categoria === cat) {
+                    if((p.categoria || "Geral") === cat) {
                         container.innerHTML += `
-                            <div class="card-produto" onclick="abrirProduto(${i})">
+                            <div class="card-produto">
                                 <div class="prod-info">
-                                    <h3 contenteditable="${modoEdicao}" class="${modoEdicao?'editando':''}" onblur="editLocal(${i}, 'title', this.innerText)">${p.title}</h3>
-                                    <p contenteditable="${modoEdicao}" class="${modoEdicao?'editando':''}" onblur="editLocal(${i}, 'ingredientes', this.innerText)">${p.ingredientes}</p>
-                                    <div class="prod-price">R$ <span contenteditable="${modoEdicao}" class="${modoEdicao?'editando':''}" onblur="editLocal(${i}, 'price', this.innerText)">${parseFloat(p.price).toFixed(2)}</span></div>
-                                    ${modoEdicao ? `<small style="color:red" onclick="remover(${i})">Excluir Item</small>` : ''}
+                                    <h3 contenteditable="${modoEdicao}" onblur="editLocal(${i}, 'title', this.innerText)">${p.title}</h3>
+                                    <p contenteditable="${modoEdicao}" onblur="editLocal(${i}, 'ingredientes', this.innerText)">${p.ingredientes}</p>
+                                    <div class="prod-price">R$ <span contenteditable="${modoEdicao}" onblur="editLocal(${i}, 'price', this.innerText)">${parseFloat(p.price).toFixed(2)}</span></div>
+                                    
+                                    <div class="admin-only ${modoEdicao ? 'edit-active' : ''}">
+                                        <label>Mover para:</label>
+                                        <select onchange="editLocal(${i}, 'categoria', this.value)">
+                                            ${categorias.map(c => `<option value="${c}" ${c === cat ? 'selected' : ''}>${c}</option>`).join('')}
+                                        </select>
+                                        <button onclick="remover(${i})" style="color:red; margin-left:10px; background:none; border:none; cursor:pointer">Excluir</button>
+                                    </div>
                                 </div>
                                 <div class="prod-img">
-                                    <img src="${p.image}" onclick="acionarUpload('produto', ${i})" class="${modoEdicao?'editando':''}">
+                                    <img src="${p.image}" onclick="acionarUpload('produto', ${i})">
                                 </div>
                             </div>
                         `;
@@ -155,12 +148,10 @@
             dadosLoja.produtos[index][campo] = valor;
         }
 
-        async function salvarFirebase() {
-            try {
-                await db.ref(`lojas/${LOJA_ID}`).set(dadosLoja);
-                alert("Salvo com sucesso!");
-                location.reload();
-            } catch (e) { alert("Erro ao salvar!"); }
+        async function salvarTudo() {
+            await db.ref(`lojas/${LOJA_ID}`).update(dadosLoja);
+            alert("Alterações salvas!");
+            location.reload();
         }
 
         function loginAdmin() {
@@ -168,10 +159,24 @@
             if(pass === dadosLoja.config.senhaAdmin) {
                 modoEdicao = true;
                 document.getElementById('area-admin').style.display = 'block';
-                document.getElementById('nome-loja').contentEditable = true;
-                document.getElementById('rua-loja').contentEditable = true;
-                renderizar();
+                render();
             }
+        }
+
+        function novaCategoria() {
+            const nome = prompt("Nome da nova categoria:");
+            if(nome) {
+                if(!dadosLoja.produtos) dadosLoja.produtos = [];
+                // Adiciona um item temporário para criar a categoria
+                dadosLoja.produtos.push({ title: "Novo Item", ingredientes: "Descrição...", price: "0.00", categoria: nome, image: "https://via.placeholder.com/150" });
+                render();
+            }
+        }
+
+        function novoProduto() {
+            if(!dadosLoja.produtos) dadosLoja.produtos = [];
+            dadosLoja.produtos.push({ title: "Novo Lanche", ingredientes: "Ingredientes...", price: "0.00", categoria: "Geral", image: "https://via.placeholder.com/150" });
+            render();
         }
 
         function acionarUpload(tipo, index) {
@@ -188,30 +193,18 @@
             const url = await ref.getDownloadURL();
             if(uploadRef.tipo === 'logo') dadosLoja.config.logo = url;
             else dadosLoja.produtos[uploadRef.index].image = url;
-            salvarFirebase();
+            render();
+            alert("Imagem carregada! Clique em SALVAR TUDO para confirmar.");
         }
 
-        function adicionarNovoProduto() {
-            if(!dadosLoja.produtos) dadosLoja.produtos = [];
-            const cat = prompt("Para qual categoria?", "Geral");
-            dadosLoja.produtos.push({ title: "Novo Item", ingredientes: "Descrição...", price: "0.00", categoria: cat, image: "https://via.placeholder.com/150" });
-            renderizar();
-        }
-
-        function novaCategoria() {
-            const nome = prompt("Nome da nova categoria:");
-            if(nome) {
-                dadosLoja.produtos.push({ title: "Primeiro item da categoria", ingredientes: "...", price: "0.00", categoria: nome, image: "https://via.placeholder.com/150" });
-                renderizar();
+        function remover(i) {
+            if(confirm("Excluir este produto?")) {
+                dadosLoja.produtos.splice(i, 1);
+                render();
             }
         }
 
-        function abrirProduto(i) {
-            if(modoEdicao) return;
-            alert("Você clicou em: " + dadosLoja.produtos[i].title + "\nAqui abriria a lista de adicionais/clicáveis.");
-        }
-
-        window.onload = carregarDados;
+        window.onload = init;
     </script>
 </body>
 </html>
