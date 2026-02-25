@@ -3,64 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Administrativo - Gestão e Cobrança</title>
+    <title>Painel Administrativo - Foco Total</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        :root { --primary: #2c3e50; --success: #27ae60; --danger: #e74c3c; --info: #3498db; --warning: #f39c12; }
+        :root { --primary: #2c3e50; --success: #27ae60; --danger: #e74c3c; --info: #3498db; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: #f4f7f6; color: #333; padding: 10px; padding-bottom: 50px; }
-        .container { max-width: 850px; margin: auto; }
-        h2 { text-align: center; margin: 20px 0; color: var(--primary); font-size: 1.5rem; }
+        body { background: #f4f7f6; padding: 10px; }
+        .container { max-width: 800px; margin: auto; }
         .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .grid-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        @media (max-width: 600px) { .grid-form { grid-template-columns: 1fr; } }
+        h2 { text-align: center; margin-bottom: 20px; color: var(--primary); }
+        
         label { font-size: 0.75rem; font-weight: bold; color: #666; display: block; margin-top: 10px; }
         input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-top: 5px; font-size: 1rem; }
-        .btn { width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; transition: 0.3s; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+        
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-save { background: var(--success); }
-        .btn-clear { background: #95a5a6; }
+        
         .lista-lojas { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .loja-item { border-bottom: 1px solid #eee; padding: 15px 0; }
-        .loja-header { display: flex; justify-content: space-between; align-items: center; }
-        .loja-info b { color: var(--primary); font-size: 1.1rem; }
-        .resumo-financeiro { background: #f9f9f9; padding: 15px; border-radius: 10px; margin-top: 10px; display: none; border-left: 5px solid var(--info); }
-        .financeiro-item { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9rem; }
-        .total-cobrar { font-weight: bold; color: var(--danger); font-size: 1rem; border-top: 1px solid #ddd; padding-top: 5px; }
-        .btn-mini { padding: 8px 12px; border-radius: 5px; border: none; cursor: pointer; color: white; font-size: 0.8rem; }
+        .loja-item { border-bottom: 1px solid #eee; padding: 15px 0; display: flex; justify-content: space-between; align-items: center; }
+        .resumo-fin { background: #f1f1f1; padding: 10px; border-radius: 8px; margin-top: 10px; display: none; font-size: 0.9rem; }
+        .btn-mini { padding: 8px; border-radius: 5px; border: none; cursor: pointer; color: white; margin-left: 5px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2><i class="fa fa-chart-line"></i> Gestão Master de Restaurantes</h2>
+    <h2><i class="fa fa-rocket"></i> Painel de Controle</h2>
 
     <div class="card">
-        <div id="form-title" style="font-weight: bold; margin-bottom: 10px; color: var(--info);">Novo Cadastro / Edição de Dados</div>
-        <label>ID da URL (ex: snoop_lanche)</label>
-        <input type="text" id="id" placeholder="identificador_da_loja">
-        <div class="grid-form">
-            <div><label>Nome do Restaurante</label><input type="text" id="nome"></div>
-            <div><label>WhatsApp (55...)</label><input type="text" id="zap"></div>
+        <label>ID Único (URL do site)</label>
+        <input type="text" id="id" placeholder="Ex: casa_do_sushi (Use letras e sublinhado)">
+
+        <div class="grid">
+            <div>
+                <label>Nome Fantasia</label>
+                <input type="text" id="nome" placeholder="Ex: Casa do Sushi">
+            </div>
+            <div>
+                <label>WhatsApp</label>
+                <input type="text" id="zap" placeholder="Ex: 5547999999999">
+            </div>
         </div>
+
         <label>Endereço Completo</label>
-        <input type="text" id="rua">
-        <div class="grid-form">
-            <div><label>Latitude</label><input type="text" id="lat"></div>
-            <div><label>Longitude</label><input type="text" id="lon"></div>
+        <input type="text" id="rua" placeholder="Rua Exemplo, 123 - Jaraguá do Sul">
+
+        <div class="grid">
+            <div>
+                <label>Latitude</label>
+                <input type="text" id="lat" placeholder="Ex: -26.4842">
+            </div>
+            <div>
+                <label>Longitude</label>
+                <input type="text" id="lon" placeholder="Ex: -49.0843">
+            </div>
         </div>
-        <div class="grid-form">
-            <div><label>R$ por KM (Entrega)</label><input type="text" id="km"></div>
-            <div><label>Senha do Dono</label><input type="text" id="pass"></div>
+
+        <div class="grid">
+            <div>
+                <label>R$ por KM</label>
+                <input type="text" id="km" placeholder="Ex: 1.50">
+            </div>
+            <div>
+                <label>Senha do Painel</label>
+                <input type="text" id="pass" placeholder="Crie uma senha para o dono">
+            </div>
         </div>
-        <button class="btn btn-save" onclick="salvarLoja()"><i class="fa fa-save"></i> SALVAR CONFIGURAÇÕES</button>
-        <button class="btn btn-clear" onclick="limparCampos()">LIMPAR CAMPOS</button>
+
+        <button class="btn btn-save" onclick="salvarLoja()"><i class="fa fa-save"></i> SALVAR / CRIAR AGORA</button>
     </div>
 
     <div class="lista-lojas">
-        <h3 style="margin-bottom: 15px; font-size: 1rem;"><i class="fa fa-list"></i> Restaurantes Ativos e Vendas</h3>
-        <div id="render-lista"><p style="text-align: center; color: #999;">Carregando dados...</p></div>
+        <h3><i class="fa fa-store"></i> Restaurantes Ativos</h3>
+        <div id="render-lista" style="margin-top: 10px;">Buscando no banco de dados...</div>
     </div>
 </div>
 
@@ -80,50 +100,40 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    function listarLojas() {
-        // Correção: Lendo diretamente do nó 'lojas'
+    // FUNÇÃO PARA LISTAR TUDO QUE EXISTE NO NÓ 'LOJAS'
+    function atualizarLista() {
         db.ref('lojas').on('value', (snap) => {
-            const listaDiv = document.getElementById('render-lista');
-            listaDiv.innerHTML = "";
-            const lojas = snap.val();
-            
-            if(!lojas) {
-                listaDiv.innerHTML = "<p style='text-align:center;'>Nenhum restaurante encontrado.</p>";
+            const render = document.getElementById('render-lista');
+            render.innerHTML = "";
+            const dados = snap.val();
+
+            if(!dados) {
+                render.innerHTML = "Nenhum restaurante encontrado no Firebase.";
                 return;
             }
 
-            for(let id in lojas) {
-                const config = lojas[id].config || {};
-                const pedidos = lojas[id].pedidos || {};
+            for(let id in dados) {
+                const config = dados[id].config || {};
+                const pedidos = dados[id].pedidos || {};
                 
-                let totalVendasMes = 0;
-                // Soma apenas o subtotal dos produtos de cada pedido
-                for(let pId in pedidos) {
-                    const p = pedidos[pId];
-                    totalVendasMes += parseFloat(p.subtotal || 0);
-                }
+                // Soma vendas (subtotal)
+                let vendasTotal = 0;
+                for(let p in pedidos) { vendasTotal += parseFloat(pedidos[p].subtotal || 0); }
+                let taxa = vendasTotal * 0.10;
 
-                const taxaSistema = totalVendasMes * 0.10; // 10% de comissão
-
-                listaDiv.innerHTML += `
+                render.innerHTML += `
                     <div class="loja-item">
-                        <div class="loja-header">
-                            <div class="loja-info">
-                                <b>${config.nomeLoja || id}</b>
-                                <span style="font-size:0.7rem; color:#888; display:block;">ID: ${id}</span>
-                            </div>
-                            <div class="actions">
-                                <button class="btn-mini" title="Ver Financeiro" style="background:var(--info)" onclick="toggleFinanceiro('${id}')"><i class="fa fa-dollar-sign"></i></button>
-                                <button class="btn-mini" title="Editar" style="background:var(--warning)" onclick="carregarParaEditar('${id}')"><i class="fa fa-edit"></i></button>
-                                <button class="btn-mini" title="Excluir" style="background:var(--danger)" onclick="excluirLoja('${id}')"><i class="fa fa-trash"></i></button>
-                            </div>
+                        <div>
+                            <b>${config.nomeLoja || id}</b><br>
+                            <small>ID: ${id}</small>
                         </div>
-                        <div id="fin-${id}" class="resumo-financeiro">
-                            <div class="financeiro-item"><span>Total em Vendas (Produtos):</span> <b>R$ ${totalVendasMes.toFixed(2)}</b></div>
-                            <div class="financeiro-item"><span>Taxa do Sistema (10%):</span> <b>R$ ${taxaSistema.toFixed(2)}</b></div>
-                            <div class="financeiro-item" style="color:#888; font-size:0.7rem;">* Taxa de entrega do motoboy não incluída.</div>
-                            <div class="financeiro-item total-cobrar"><span>VALOR A COBRAR:</span> <span>R$ ${taxaSistema.toFixed(2)}</span></div>
+                        <div>
+                            <button class="btn-mini" style="background:var(--info)" onclick="toggleFin('${id}')"><i class="fa fa-dollar-sign"></i></button>
+                            <button class="btn-mini" style="background:var(--danger)" onclick="excluir('${id}')"><i class="fa fa-trash"></i></button>
                         </div>
+                    </div>
+                    <div id="fin-${id}" class="resumo-fin">
+                        Vendas: R$ ${vendasTotal.toFixed(2)} | <b>Taxa (10%): R$ ${taxa.toFixed(2)}</b>
                     </div>
                 `;
             }
@@ -131,4 +141,45 @@
     }
 
     async function salvarLoja() {
-        const id = document.getElementById('id').value.toLowerCase().replace(/\s/
+        const id = document.getElementById('id').value.trim();
+        if(!id) return alert("Digite o ID!");
+
+        // Busca se já existe para não apagar produtos/pedidos
+        const snap = await db.ref(`lojas/${id}`).once('value');
+        const data = snap.val();
+
+        const payload = {
+            config: {
+                nomeLoja: document.getElementById('nome').value,
+                whatsapp: document.getElementById('zap').value,
+                rua: document.getElementById('rua').value,
+                lat: document.getElementById('lat').value,
+                lon: document.getElementById('lon').value,
+                valorKm: parseFloat(document.getElementById('km').value) || 0,
+                senhaAdmin: document.getElementById('pass').value,
+                logo: data ? data.config.logo : "https://via.placeholder.com/150"
+            },
+            produtos: data ? data.produtos : [],
+            pedidos: data ? data.pedidos : {}
+        };
+
+        await db.ref(`lojas/${id}`).set(payload);
+        alert("Salvo com sucesso!");
+        document.querySelectorAll('input').forEach(i => i.value = "");
+    }
+
+    function excluir(id) {
+        if(confirm("Deseja deletar permanentemente " + id + "?")) {
+            db.ref(`lojas/${id}`).remove();
+        }
+    }
+
+    function toggleFin(id) {
+        const el = document.getElementById('fin-' + id);
+        el.style.display = el.style.display === 'block' ? 'none' : 'block';
+    }
+
+    window.onload = atualizarLista;
+</script>
+</body>
+</html>
