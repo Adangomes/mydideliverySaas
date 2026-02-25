@@ -14,48 +14,39 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; outline: none; }
         body { background: var(--bg); color: var(--dark); padding-bottom: 100px; }
 
-        /* HEADER ESTILO APP */
         header { background: white; padding: 40px 20px 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: relative; }
-        #loja-logo { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 10px; transition: 0.3s; }
+        #loja-logo { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 10px; }
         #nome-loja { font-size: 1.2rem; font-weight: 700; color: #000; }
         .user-btn { position: absolute; right: 20px; top: 20px; background: none; border: none; font-size: 24px; color: #888; cursor: pointer; }
 
-        /* CATEGORIAS */
-        .categorias-nav { display: flex; overflow-x: auto; padding: 15px; gap: 10px; background: white; sticky; top: 0; z-index: 100; border-bottom: 1px solid #eee; }
+        .categorias-nav { display: flex; overflow-x: auto; padding: 15px; gap: 10px; background: white; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #eee; }
         .categorias-nav::-webkit-scrollbar { display: none; }
-        .cat-item { background: #f2f2f2; padding: 8px 18px; border-radius: 8px; text-decoration: none; color: #666; font-size: 13px; font-weight: 600; white-space: nowrap; transition: 0.2s; }
-        .cat-item:hover { background: var(--primary); color: white; }
+        .cat-item { background: #f2f2f2; padding: 8px 18px; border-radius: 8px; text-decoration: none; color: #666; font-size: 13px; font-weight: 600; white-space: nowrap; }
 
-        /* PRODUTOS */
         .container { max-width: 600px; margin: 0 auto; padding: 15px; }
         .section-title { font-size: 1.1rem; font-weight: 700; margin: 25px 0 15px; color: #000; }
-        .card-produto { background: white; display: flex; padding: 15px; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); cursor: pointer; gap: 12px; transition: 0.2s; border: 1px solid #f9f9f9; }
-        .card-produto:active { transform: scale(0.98); }
+        .card-produto { background: white; display: flex; padding: 15px; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); cursor: pointer; gap: 12px; border: 1px solid #f9f9f9; }
         .prod-info { flex: 1; }
         .prod-info h3 { font-size: 0.95rem; margin-bottom: 4px; color: #333; }
         .prod-info p { font-size: 0.8rem; color: #717171; line-height: 1.3; margin-bottom: 8px; }
-        .prod-price { color: var(--success); font-weight: 600; font-size: 0.95rem; }
+        .prod-price { color: var(--success); font-weight: 600; }
         .prod-img img { width: 90px; height: 90px; border-radius: 8px; object-fit: cover; }
 
-        /* ADMIN BOX */
-        .area-admin { display: none; background: #2c3e50; padding: 15px; text-align: center; sticky; top: 0; z-index: 2000; }
+        .area-admin { display: none; background: #2c3e50; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 2000; }
         .btn-adm { padding: 10px; border-radius: 5px; border: none; font-size: 11px; font-weight: bold; margin: 3px; cursor: pointer; }
         .admin-box { display: none; margin-top: 10px; padding: 10px; background: #fdfdfd; border-radius: 8px; border: 1px dashed #ccc; }
         .admin-box input, .admin-box select { width: 100%; padding: 8px; margin: 4px 0; border-radius: 4px; border: 1px solid #ddd; font-size: 11px; }
 
-        /* CARRINHO */
         #footer-cart { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 500px; background: var(--primary); color: white; padding: 15px 20px; border-radius: 12px; display: none; justify-content: space-between; font-weight: 600; box-shadow: 0 10px 25px rgba(234, 29, 44, 0.3); z-index: 1000; cursor: pointer; }
 
-        /* MODAIS E LOADERS */
         #checkout-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 2500; display: none; overflow-y: auto; padding: 20px; }
         .loader-container { display: none; text-align: center; padding: 40px 0; }
         .loader { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .modal-aviso { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); color: white; padding: 15px 25px; border-radius: 10px; display: none; z-index: 3000; }
-
-        .checkout-item { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 5px; color: #555; }
-        .total-row { border-top: 1px solid #eee; margin-top: 10px; padding-top: 10px; font-weight: 700; color: #000; }
+        .input-checkout { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 12px; font-size: 14px; }
+        .checkout-item { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 5px; }
+        .total-row { border-top: 1px solid #eee; margin-top: 10px; padding-top: 10px; font-weight: 700; }
     </style>
 </head>
 <body>
@@ -82,24 +73,28 @@
 
     <div id="checkout-screen">
         <div id="checkout-form-content">
-            <h2 style="margin-bottom:20px; font-size: 1.4rem;">Finalizar Pedido</h2>
+            <h2 style="margin-bottom:20px;">Finalizar Pedido</h2>
             
             <div style="background:#fff; border:1px solid #eee; padding:15px; border-radius:12px; margin-bottom:20px">
-                <div class="input-group" style="margin-bottom:12px">
-                    <input type="text" id="cli-nome" placeholder="Seu nome completo" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd">
-                </div>
-                <div style="display:grid; grid-template-columns: 2fr 1fr; gap:10px; margin-bottom:12px">
-                    <input type="text" id="cli-rua" placeholder="Rua e número">
-                    <input type="text" id="cli-bairro" placeholder="Bairro">
-                </div>
-                <input type="text" id="cli-ref" placeholder="Ponto de referência" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd; margin-bottom:12px">
+                <input type="text" id="cli-nome" class="input-checkout" placeholder="Seu nome completo">
                 
-                <select id="cli-pagamento" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd; margin-bottom:12px">
-                    <option value="Dinheiro">Dinheiro (levar troco)</option>
+                <label style="font-size:12px; font-weight:bold; color:#888">CIDADE:</label>
+                <select id="cli-cidade" class="input-checkout">
+                    <option value="Jaraguá do Sul">Jaraguá do Sul</option>
+                    <option value="Guaramirim">Guaramirim</option>
+                    <option value="Schroeder">Schroeder</option>
+                </select>
+
+                <input type="text" id="cli-rua" class="input-checkout" placeholder="Rua e número">
+                <input type="text" id="cli-bairro" class="input-checkout" placeholder="Bairro">
+                <input type="text" id="cli-ref" class="input-checkout" placeholder="Ponto de referência">
+                
+                <select id="cli-pagamento" class="input-checkout">
+                    <option value="Dinheiro">Dinheiro</option>
                     <option value="PIX">PIX</option>
                     <option value="Cartão">Cartão de Crédito/Débito</option>
                 </select>
-                <textarea id="cli-obs" placeholder="Alguma observação? (ex: sem cebola)" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd; height:80px"></textarea>
+                <textarea id="cli-obs" class="input-checkout" placeholder="Observações (ex: sem cebola)" style="height:80px"></textarea>
             </div>
 
             <button onclick="calcularETaxa()" style="width:100%; background:var(--dark); color:white; padding:18px; border:none; border-radius:12px; font-weight:bold; cursor:pointer">
@@ -109,34 +104,31 @@
 
         <div id="loading-checkout" class="loader-container">
             <div class="loader"></div>
-            <p>Calculando a melhor rota...</p>
+            <p>Calculando taxa de entrega para sua região...</p>
         </div>
 
         <div id="resumo-final" style="display:none; margin-top:20px; background:#f9f9f9; padding:20px; border-radius:12px">
             <h3 style="margin-bottom:15px">Resumo do Pedido</h3>
             <div id="lista-itens-resumo"></div>
             <div class="checkout-item total-row">
-                <span>Produtos:</span> <span id="res-subtotal">R$ 0,00</span>
+                <span>Subtotal:</span> <span id="res-subtotal"></span>
             </div>
             <div class="checkout-item">
-                <span>Taxa de Entrega:</span> <span id="res-taxa" style="color:var(--success)">R$ 0,00</span>
+                <span>Taxa de Entrega:</span> <span id="res-taxa" style="color:var(--success)"></span>
             </div>
             <div class="checkout-item total-row" style="font-size:18px; color:var(--primary)">
-                <span>Total Geral:</span> <span id="res-total-geral">R$ 0,00</span>
+                <span>Total Geral:</span> <span id="res-total-geral"></span>
             </div>
             
             <button onclick="enviarWhatsApp()" style="width:100%; background:var(--success); color:white; padding:18px; border:none; border-radius:12px; font-weight:bold; margin-top:20px; cursor:pointer">
-                <i class="fa-brands fa-whatsapp"></i> ENVIAR PARA O WHATSAPP
+                <i class="fa-brands fa-whatsapp"></i> ENVIAR PEDIDO
             </button>
         </div>
 
-        <button onclick="document.getElementById('checkout-screen').style.display='none'" style="width:100%; margin-top:15px; border:none; background:none; color:#888; font-weight:600">Voltar para o cardápio</button>
+        <button onclick="document.getElementById('checkout-screen').style.display='none'" style="width:100%; margin-top:15px; border:none; background:none; color:#888; font-weight:600">Voltar</button>
     </div>
 
-    <div class="modal-aviso" id="aviso"></div>
-
     <script>
-        // CONFIG FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyCXA1yP1F-riNkzOX5zJs5gsQ82EzsT7Qg",
             authDomain: "myproject26-10f0e.firebaseapp.com",
@@ -203,16 +195,8 @@
 
         function addCarrinho(i) {
             carrinho.push(dadosLoja.produtos[i]);
-            atualizarBarra();
-            const aviso = document.getElementById('aviso');
-            aviso.innerText = "Adicionado à sacola!";
-            aviso.style.display = 'block';
-            setTimeout(() => aviso.style.display = 'none', 1500);
-        }
-
-        function atualizarBarra() {
             const total = carrinho.reduce((sum, item) => sum + parseFloat(item.price), 0);
-            document.getElementById('footer-cart').style.display = carrinho.length > 0 ? 'flex' : 'none';
+            document.getElementById('footer-cart').style.display = 'flex';
             document.getElementById('cart-count').innerText = carrinho.length;
             document.getElementById('cart-total').innerText = `R$ ${total.toFixed(2)}`;
         }
@@ -224,9 +208,8 @@
         }
 
         function calcularETaxa() {
-            const rua = document.getElementById('cli-rua').value;
-            if(!rua) return alert("Por favor, digite seu endereço!");
-
+            if(!document.getElementById('cli-rua').value) return alert("Preencha o endereço!");
+            
             document.getElementById('checkout-form-content').style.display = 'none';
             document.getElementById('loading-checkout').style.display = 'block';
 
@@ -234,8 +217,11 @@
                 document.getElementById('loading-checkout').style.display = 'none';
                 document.getElementById('resumo-final').style.display = 'block';
                 
-                // Simulação de taxa (ex: fixa em 7.00 ou variável por bairro)
-                taxaEntrega = 7.00; 
+                // Lógica de taxa por cidade
+                const cidade = document.getElementById('cli-cidade').value;
+                if(cidade === "Guaramirim") taxaEntrega = 5.00;
+                else if(cidade === "Jaraguá do Sul") taxaEntrega = 10.00;
+                else taxaEntrega = 12.00; // Schroeder
                 
                 const subtotal = carrinho.reduce((sum, item) => sum + parseFloat(item.price), 0);
                 document.getElementById('lista-itens-resumo').innerHTML = carrinho.map(i => `
@@ -250,28 +236,27 @@
 
         function enviarWhatsApp() {
             const subtotal = carrinho.reduce((sum, item) => sum + parseFloat(item.price), 0);
-            const msg = `*PEDIDO: ${dadosLoja.config.nomeLoja}*%0A` +
+            const cidade = document.getElementById('cli-cidade').value;
+            const msg = `*NOVO PEDIDO - ${dadosLoja.config.nomeLoja}*%0A` +
                 `*Cliente:* ${document.getElementById('cli-nome').value}%0A` +
+                `*Cidade:* ${cidade}%0A` +
                 `*Endereço:* ${document.getElementById('cli-rua').value}, ${document.getElementById('cli-bairro').value}%0A` +
-                `*Ref:* ${document.getElementById('cli-ref').value}%0A` +
-                `*Pagamento:* ${document.getElementById('cli-pagamento').value}%0A` +
-                `*Obs:* ${document.getElementById('cli-obs').value}%0A%0A` +
+                `*Pagamento:* ${document.getElementById('cli-pagamento').value}%0A%0A` +
                 `*Itens:*%0A${carrinho.map(i => `- ${i.title}`).join('%0A')}%0A%0A` +
-                `*Produtos:* R$ ${subtotal.toFixed(2)}%0A` +
+                `*Subtotal:* R$ ${subtotal.toFixed(2)}%0A` +
                 `*Taxa:* R$ ${taxaEntrega.toFixed(2)}%0A` +
                 `*TOTAL:* R$ ${(subtotal + taxaEntrega).toFixed(2)}`;
             
             window.open(`https://wa.me/55${dadosLoja.config.whatsapp}?text=${msg}`);
         }
 
-        // ADMIN
+        function ativarAdmin() { if(prompt("Senha:") === dadosLoja.config.senhaAdmin) { modoEdicao = true; document.getElementById('area-admin').style.display = 'block'; render(); } }
+        async function salvarTudo() { await db.ref(`lojas/${LOJA_ID}`).set(dadosLoja); alert("Salvo!"); location.reload(); }
         function updateLocal(i, c, v) { dadosLoja.produtos[i][c] = v; if(c==='image') render(); }
-        async function salvarTudo() { await db.ref(`lojas/${LOJA_ID}`).set(dadosLoja); alert("Gravado com sucesso!"); location.reload(); }
-        function ativarAdmin() { if(prompt("Senha Admin:") === dadosLoja.config.senhaAdmin) { modoEdicao = true; document.getElementById('area-admin').style.display = 'block'; render(); } }
-        function novoProduto() { dadosLoja.produtos.push({title:"Novo Item", price:"0.00", categoria:"Geral", image:"https://via.placeholder.com/150"}); render(); }
-        function novaCategoria() { const n = prompt("Nova Categoria:"); if(n) { dadosLoja.produtos.push({title:"Exemplo", price:"0.00", categoria:n, image:"https://via.placeholder.com/150"}); render(); } }
+        function novoProduto() { dadosLoja.produtos.push({title:"Novo", price:"0.00", categoria:"Geral", image:"https://via.placeholder.com/150"}); render(); }
+        function novaCategoria() { const n = prompt("Nome:"); if(n) { dadosLoja.produtos.push({title:"Novo", price:"0.00", categoria:n, image:"https://via.placeholder.com/150"}); render(); } }
         function remover(i) { dadosLoja.produtos.splice(i,1); render(); }
-        function trocarLogo() { if(modoEdicao) { const l = prompt("URL da Logo:"); if(l) { dadosLoja.config.logo = l; render(); } } }
+        function trocarLogo() { if(modoEdicao) { const l = prompt("Link Logo:"); if(l) { dadosLoja.config.logo = l; render(); } } }
 
         window.onload = init;
     </script>
