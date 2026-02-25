@@ -9,7 +9,6 @@
     
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
 
     <style>
         :root { --primary: #e74c3c; --dark: #2c3e50; --success: #27ae60; --light: #f8f9fa; }
@@ -48,8 +47,9 @@
         .prod-img img { width: 110px; height: 110px; border-radius: 18px; object-fit: cover; background: #f9f9f9; }
 
         /* MODO ADMIN INTERNO */
-        .admin-box { display: none; background: #f9f9f9; padding: 12px; border-radius: 10px; border: 1px dashed #ccc; margin-top: 10px; }
-        .admin-box select, .admin-box input { width: 100%; padding: 8px; margin: 5px 0; border-radius: 5px; border: 1px solid #ddd; }
+        .admin-box { display: none; background: #f4f4f4; padding: 15px; border-radius: 10px; border: 1px solid #ddd; margin-top: 10px; }
+        .admin-box label { font-size: 10px; font-weight: bold; color: #555; display: block; margin-top: 5px; }
+        .admin-box select, .admin-box input { width: 100%; padding: 8px; margin: 5px 0; border-radius: 5px; border: 1px solid #ccc; font-size: 12px; }
         .show-admin { display: block !important; }
 
         /* CARRINHO FIXO */
@@ -61,23 +61,20 @@
     <div id="area-admin" class="area-admin">
         <button class="btn-adm" style="background:var(--success); color:white" onclick="novoProduto()">+ NOVO PRODUTO</button>
         <button class="btn-adm" style="background:#3498db; color:white" onclick="novaCategoria()">+ NOVA CATEGORIA</button>
-        <button class="btn-adm btn-save" onclick="salvarGeral()">💾 SALVAR TUDO</button>
-        <input type="file" id="upload-file" style="display:none" onchange="processarUpload(event)">
+        <button class="btn-adm btn-save" onclick="salvarTudo()">💾 SALVAR TUDO</button>
     </div>
 
     <header>
         <div class="header-content">
-            <img id="loja-logo" onclick="acionarUpload('logo')" src="https://via.placeholder.com/100" alt="Logo">
-            <h1 id="nome-loja" contenteditable="false">Carregando...</h1>
-            <button class="user-access" onclick="entrarModoAdmin()"><i class="fa fa-user-circle"></i></button>
+            <img id="loja-logo" onclick="trocarLogoPorLink()" src="https://via.placeholder.com/100" alt="Logo">
+            <h1 id="nome-loja">Carregando...</h1>
+            <button class="user-access" onclick="ativarAdmin()"><i class="fa fa-user-circle"></i></button>
         </div>
     </header>
 
     <div class="categorias-nav" id="cat-nav"></div>
 
-    <main class="container" id="cardapio-corpo">
-        <p style="text-align:center; padding:50px;">Buscando produtos...</p>
-    </main>
+    <main class="container" id="cardapio-corpo"></main>
 
     <div id="footer-cart">
         <span>🛒 <span id="cart-count">0</span> Itens</span>
@@ -85,7 +82,6 @@
     </div>
 
     <script>
-        // CONFIGURAÇÃO FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyCXA1yP1F-riNkzOX5zJs5gsQ82EzsT7Qg",
             authDomain: "myproject26-10f0e.firebaseapp.com",
@@ -97,16 +93,13 @@
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-        const storage = firebase.storage();
 
         const LOJA_ID = new URLSearchParams(window.location.search).get('loja');
         let dadosLoja = null;
         let modoEdicao = false;
-        let targetUpload = null;
 
         async function init() {
-            if(!LOJA_ID) return alert("Erro: ID da loja não encontrado na URL (?loja=NOME)");
-            
+            if(!LOJA_ID) return alert("Erro: Use ?loja=nome_da_loja na URL");
             db.ref(`lojas/${LOJA_ID}`).on('value', snap => {
                 dadosLoja = snap.val();
                 if(dadosLoja) render();
@@ -115,7 +108,7 @@
 
         function render() {
             document.getElementById('nome-loja').innerText = dadosLoja.config.nomeLoja;
-            document.getElementById('loja-logo').src = dadosLoja.config.logo || 'https://via.placeholder.com/100';
+            document.getElementById('loja-logo').src = dadosLoja.config.logo;
 
             const corpo = document.getElementById('cardapio-corpo');
             const nav = document.getElementById('cat-nav');
@@ -126,9 +119,7 @@
             const categorias = [...new Set(produtos.map(p => p.categoria || "Geral"))];
 
             categorias.forEach(cat => {
-                // Nav
                 nav.innerHTML += `<a href="#${cat}" class="cat-item">${cat}</a>`;
-                // Titulo da Seção
                 corpo.innerHTML += `<div class="section-title" id="${cat}">${cat}</div>`;
 
                 produtos.forEach((p, i) => {
@@ -136,20 +127,20 @@
                         corpo.innerHTML += `
                             <div class="card-produto">
                                 <div class="prod-info">
-                                    <h3 contenteditable="${modoEdicao}" onblur="updateMemoria(${i}, 'title', this.innerText)">${p.title}</h3>
-                                    <p contenteditable="${modoEdicao}" onblur="updateMemoria(${i}, 'ingredientes', this.innerText)">${p.ingredientes}</p>
-                                    <div class="prod-price">R$ <span contenteditable="${modoEdicao}" onblur="updateMemoria(${i}, 'price', this.innerText)">${parseFloat(p.price).toFixed(2)}</span></div>
+                                    <h3 contenteditable="${modoEdicao}" onblur="updateLocal(${i}, 'title', this.innerText)">${p.title}</h3>
+                                    <p contenteditable="${modoEdicao}" onblur="updateLocal(${i}, 'ingredientes', this.innerText)">${p.ingredientes}</p>
+                                    <div class="prod-price">R$ <span contenteditable="${modoEdicao}" onblur="updateLocal(${i}, 'price', this.innerText)">${parseFloat(p.price).toFixed(2)}</span></div>
                                     
                                     <div class="admin-box ${modoEdicao ? 'show-admin' : ''}">
-                                        <label style="font-size:10px; font-weight:bold">CATEGORIA:</label>
-                                        <select onchange="updateMemoria(${i}, 'categoria', this.value)">
+                                        <label>CATEGORIA:</label>
+                                        <select onchange="updateLocal(${i}, 'categoria', this.value)">
                                             ${categorias.map(c => `<option value="${c}" ${c === cat ? 'selected' : ''}>${c}</option>`).join('')}
                                         </select>
-                                        <div style="display:flex; gap:5px; margin-top:5px">
-                                            <button onclick="acionarUpload('produto', ${i})" style="flex:1; font-size:10px; padding:5px; background:#333; color:white; border:none; border-radius:4px">NOVA FOTO</button>
-                                            <button onclick="mudarLinkManual(${i})" style="flex:1; font-size:10px; padding:5px; background:#666; color:white; border:none; border-radius:4px">COLAR LINK</button>
-                                        </div>
-                                        <button onclick="removerItem(${i})" style="width:100%; font-size:10px; color:red; margin-top:8px; background:none; border:none; cursor:pointer">EXCLUIR PRODUTO</button>
+                                        
+                                        <label>LINK DA FOTO (.jpg, .png):</label>
+                                        <input type="text" value="${p.image}" onchange="updateLocal(${i}, 'image', this.value)" placeholder="Cole o link da foto aqui">
+                                        
+                                        <button onclick="removerItem(${i})" style="width:100%; color:red; margin-top:10px; background:none; border:none; cursor:pointer; font-size:11px">EXCLUIR ITEM</button>
                                     </div>
                                 </div>
                                 <div class="prod-img">
@@ -162,87 +153,48 @@
             });
         }
 
-        // --- FUNÇÕES DE EDIÇÃO ---
-
-        function updateMemoria(index, campo, valor) {
+        function updateLocal(index, campo, valor) {
             if(campo === 'price') valor = valor.replace(',', '.');
             dadosLoja.produtos[index][campo] = valor;
+            // Se mudou a imagem no input, atualiza o visual imediatamente
+            if(campo === 'image') render();
         }
 
-        async function salvarGeral() {
+        async function salvarTudo() {
             try {
-                // Atualiza o nome da loja também se mudou
                 dadosLoja.config.nomeLoja = document.getElementById('nome-loja').innerText;
-                
                 await db.ref(`lojas/${LOJA_ID}`).set(dadosLoja);
-                alert("✅ Alterações salvas no Banco de Dados!");
+                alert("✅ Salvo com sucesso!");
                 location.reload();
-            } catch (e) {
-                alert("Erro ao salvar: " + e.message);
-            }
+            } catch (e) { alert("Erro ao salvar!"); }
         }
 
-        function entrarModoAdmin() {
-            const p = prompt("Senha do Restaurante:");
+        function ativarAdmin() {
+            const p = prompt("Senha:");
             if(p === dadosLoja.config.senhaAdmin) {
                 modoEdicao = true;
                 document.getElementById('area-admin').style.display = 'block';
                 document.getElementById('nome-loja').contentEditable = true;
                 render();
-            } else {
-                alert("Senha incorreta!");
             }
         }
 
-        // --- FUNÇÕES DE FOTO ---
-
-        function acionarUpload(tipo, index) {
+        function trocarLogoPorLink() {
             if(!modoEdicao) return;
-            targetUpload = { tipo, index };
-            document.getElementById('upload-file').click();
-        }
-
-        async function processarUpload(e) {
-            const file = e.target.files[0];
-            if(!file) return;
-
-            alert("Subindo foto... aguarde.");
-            const ref = storage.ref(`lojas/${LOJA_ID}/${Date.now()}_${file.name}`);
-            
-            try {
-                await ref.put(file);
-                const url = await ref.getDownloadURL();
-
-                if(targetUpload.tipo === 'logo') {
-                    dadosLoja.config.logo = url;
-                } else {
-                    dadosLoja.produtos[targetUpload.index].image = url;
-                }
-                render();
-                alert("Foto carregada! Clique em SALVAR TUDO.");
-            } catch (err) {
-                alert("Erro no Firebase Storage! Tente usar o botão COLAR LINK.");
-            }
-        }
-
-        function mudarLinkManual(index) {
-            const link = prompt("Cole o link direto da imagem (URL terminada em .jpg, .png ou .webp):");
-            if(link) {
-                dadosLoja.produtos[index].image = link;
+            const novo = prompt("Cole o link da nova LOGO:", dadosLoja.config.logo);
+            if(novo) {
+                dadosLoja.config.logo = novo;
                 render();
             }
         }
-
-        // --- GESTÃO DE PRODUTOS/CATEGORIAS ---
 
         function novaCategoria() {
-            const nome = prompt("Nome da nova categoria (ex: Pizzas Doce, Bebidas 2L):");
+            const nome = prompt("Nome da nova categoria:");
             if(nome) {
                 if(!dadosLoja.produtos) dadosLoja.produtos = [];
-                // Cria um item exemplo para fixar a categoria
                 dadosLoja.produtos.push({
-                    title: "Exemplo da Categoria",
-                    ingredientes: "Edite este item...",
+                    title: "Novo Item",
+                    ingredientes: "Descrição...",
                     price: "0.00",
                     categoria: nome,
                     image: "https://via.placeholder.com/150"
@@ -254,8 +206,8 @@
         function novoProduto() {
             if(!dadosLoja.produtos) dadosLoja.produtos = [];
             dadosLoja.produtos.push({
-                title: "Novo Produto",
-                ingredientes: "Ingredientes e descrição aqui...",
+                title: "Novo Lanche",
+                ingredientes: "Ingredientes...",
                 price: "0.00",
                 categoria: "Geral",
                 image: "https://via.placeholder.com/150"
@@ -264,7 +216,7 @@
         }
 
         function removerItem(i) {
-            if(confirm("Tem certeza que deseja excluir este produto?")) {
+            if(confirm("Excluir produto?")) {
                 dadosLoja.produtos.splice(i, 1);
                 render();
             }
