@@ -12,64 +12,92 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
     <style>
-        /* CSS INTEGRADO - DESIGN MODERNO SaaS */
         :root { --primary: #e74c3c; --dark: #2c3e50; --light: #f8f9fa; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: var(--light); color: var(--dark); }
+        body { background: var(--light); padding-bottom: 100px; }
         
-        header { background: white; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
-        .header-content { display: flex; align-items: center; gap: 15px; max-width: 800px; margin: 0 auto; }
+        header { background: white; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); sticky; top: 0; z-index: 100; }
+        .header-content { display: flex; align-items: center; gap: 15px; max-width: 800px; margin: 0 auto; position: relative; }
         #loja-logo { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; }
         
-        .status { font-size: 0.8rem; padding: 2px 8px; border-radius: 12px; font-weight: bold; display: inline-block; }
-        .aberto { background: #d4edda; color: #155724; }
-        .fechado { background: #f8d7da; color: #721c24; }
+        .admin-btns { position: absolute; top: 0; right: 0; display: flex; gap: 10px; }
+        .btn-adm { background: none; border: none; color: #ccc; cursor: pointer; font-size: 1.2rem; }
 
-        #categorias-scroll { display: flex; overflow-x: auto; gap: 10px; padding: 15px; background: white; white-space: nowrap; }
-        .cat-link { padding: 8px 20px; background: #eee; border-radius: 20px; text-decoration: none; color: inherit; font-size: 0.9rem; }
-        .cat-link.active { background: var(--primary); color: white; }
+        #cardapio-corpo { max-width: 800px; margin: 20px auto; padding: 0 15px; }
+        .item-produto { background: white; margin-bottom: 15px; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .info-p h3 { font-size: 1.1rem; }
+        .info-p p { font-size: 0.85rem; color: #777; margin: 5px 0; }
+        .preco { color: var(--primary); font-weight: 700; }
+        .foto-p img { width: 70px; height: 70px; border-radius: 10px; object-fit: cover; margin-left: 10px; }
 
-        .item-produto { background: white; margin: 10px; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; cursor: pointer; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .item-produto:hover { transform: scale(1.02); }
-        .info-p h3 { font-size: 1rem; }
-        .info-p p { font-size: 0.8rem; color: #777; }
-        .preco { color: var(--primary); font-weight: bold; display: block; margin-top: 5px; }
-        .foto-p img { width: 80px; height: 80px; border-radius: 8px; object-fit: cover; }
+        /* Carrinho */
+        #btn-carrinho-fixo { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 15px 30px; border-radius: 40px; display: flex; gap: 20px; width: 90%; max-width: 400px; justify-content: space-between; cursor: pointer; z-index: 1000; font-weight: bold; }
 
-        #btn-carrinho-fixo { position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: white; padding: 15px 25px; border-radius: 30px; box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4); display: flex; align-items: center; gap: 10px; cursor: pointer; z-index: 999; }
+        /* Modais */
+        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:2000; align-items:center; justify-content:center; }
+        .modal-content { background:white; width:90%; max-width:500px; padding:20px; border-radius:15px; max-height: 80vh; overflow-y: auto; }
         
-        /* Estilo Modo Admin */
-        .modo-admin-btn { position: absolute; top: 10px; right: 10px; background: none; border: none; color: #ccc; cursor: pointer; }
-        [contenteditable="true"] { border: 1px dashed var(--primary); padding: 2px; border-radius: 4px; }
+        /* Estilo Admin */
+        .area-admin { display: none; background: #eee; padding: 15px; text-align: center; border-bottom: 2px solid #ddd; }
+        .btn-add { background: #2ecc71; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-bottom: 10px; }
+        [contenteditable="true"] { border: 1px dashed var(--primary); background: #fffdfd; }
     </style>
 </head>
 <body>
 
+    <div id="area-admin" class="area-admin">
+        <button class="btn-add" onclick="adicionarNovoProduto()"><i class="fa fa-plus"></i> Novo Produto</button>
+        <button class="btn-add" style="background:#3498db" onclick="abrirPainelPedidos()"><i class="fa fa-list"></i> Ver Pedidos</button>
+    </div>
+
     <header>
         <div class="header-content">
-            <button class="modo-admin-btn" onclick="fazerLoginAdmin()"><i class="fa fa-cog"></i></button>
-            <img id="loja-logo" src="https://via.placeholder.com/100" alt="Logo">
+            <div class="admin-btns">
+                <button class="btn-adm" onclick="loginAdmin()"><i class="fa fa-cog"></i></button>
+            </div>
+            <img id="loja-logo" src="" alt="">
             <div>
                 <h1 id="nome-loja">Carregando...</h1>
-                <div id="status-loja"></div>
+                <p id="desc-loja" style="font-size: 0.8rem; color: #777;"></p>
             </div>
         </div>
     </header>
 
-    <nav id="categorias-scroll"></nav>
     <main id="cardapio-corpo"></main>
 
-    <div id="btn-carrinho-fixo" onclick="irParaCarrinho()">
-        <i class="fa fa-shopping-cart"></i>
+    <div id="btn-carrinho-fixo" onclick="abrirModalCarrinho()">
+        <span><i class="fa fa-shopping-basket"></i> <span id="cart-qtd">0</span> ITENS</span>
         <span id="cart-total">R$ 0,00</span>
     </div>
 
+    <div id="modal-carrinho" class="modal">
+        <div class="modal-content">
+            <h2>Seu Carrinho</h2>
+            <div id="itens-carrinho-lista" style="margin: 20px 0;"></div>
+            <hr>
+            <div style="margin-top: 15px;">
+                <input type="text" id="cliente-nome" placeholder="Seu Nome" style="width:100%; padding:10px; margin-bottom:10px;">
+                <input type="text" id="cliente-end" placeholder="Endereço de Entrega" style="width:100%; padding:10px;">
+            </div>
+            <button onclick="finalizarPedido()" style="width:100%; background:#27ae60; color:white; border:none; padding:15px; margin-top:15px; border-radius:8px; font-weight:bold;">PEDIR PELO WHATSAPP</button>
+            <button onclick="fecharModais()" style="width:100%; background:#ccc; border:none; padding:10px; margin-top:10px; border-radius:8px;">Voltar</button>
+        </div>
+    </div>
+
+    <div id="modal-pedidos" class="modal">
+        <div class="modal-content">
+            <h2>Pedidos Recebidos</h2>
+            <div id="lista-pedidos-admin" style="margin-top:20px;"></div>
+            <button onclick="fecharModais()" style="width:100%; background:var(--dark); color:white; border:none; padding:10px; margin-top:20px;">Fechar</button>
+        </div>
+    </div>
+
     <script>
-        // CONFIGURAÇÕES DO FIREBASE (VOCÊ PRECISA PREENCHER AQUI)
+        // CONFIGURAÇÕES FIREBASE (COLE AS SUAS AQUI)
         const firebaseConfig = {
             apiKey: "SUA_API_KEY",
             authDomain: "SEU_PROJETO.firebaseapp.com",
-            databaseURL: "https://SEU_PROJETO.firebaseio.com",
+            databaseURL: "https://SEU_PROJETO-default-rtdb.firebaseio.com",
             projectId: "SEU_PROJETO",
             storageBucket: "SEU_PROJETO.appspot.com",
             messagingSenderId: "ID",
@@ -78,78 +106,122 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // IDENTIFICAÇÃO DA LOJA PELA URL
         const params = new URLSearchParams(window.location.search);
         const LOJA_ID = params.get('loja') || "snoop_lanche";
 
         let dadosLoja = {};
+        let carrinho = [];
 
-        // CARREGA DADOS DO FIREBASE
-        async function carregarSaaS() {
-            const snapshot = await db.ref(`restaurantes/${LOJA_ID}`).once('value');
-            dadosLoja = snapshot.val();
+        async function carregarDados() {
+            const snap = await db.ref(`restaurantes/${LOJA_ID}`).once('value');
+            dadosLoja = snap.val();
+            if(!dadosLoja) return alert("Loja não encontrada!");
 
-            if (!dadosLoja) {
-                document.body.innerHTML = "<h1>Restaurante não encontrado!</h1>";
-                return;
-            }
-
-            // Preenche Header
             document.getElementById('nome-loja').innerText = dadosLoja.config.nomeLoja;
-            document.getElementById('loja-logo').src = dadosLoja.config.logo || "https://via.placeholder.com/100";
-            
+            document.getElementById('loja-logo').src = dadosLoja.config.logo;
             renderizarCardapio();
         }
 
         function renderizarCardapio() {
             const corpo = document.getElementById('cardapio-corpo');
             corpo.innerHTML = "";
-            
-            // Lógica para agrupar categorias e produtos
-            dadosLoja.produtos.forEach((p, index) => {
+            dadosLoja.produtos?.forEach((p, idx) => {
                 corpo.innerHTML += `
-                    <div class="item-produto">
-                        <div class="info-p">
-                            <h3 class="editavel" data-path="produtos/${index}/title">${p.title}</h3>
-                            <p class="editavel" data-path="produtos/${index}/ingredientes">${p.ingredientes || ""}</p>
-                            <span class="preco editavel" data-path="produtos/${index}/price">R$ ${p.price.toFixed(2)}</span>
-                        </div>
-                        <div class="foto-p">
-                            <img src="${p.image}">
-                        </div>
+                <div class="item-produto" onclick="addCarrinho(${idx})">
+                    <div class="info-p">
+                        <h3 class="edit" data-path="produtos/${idx}/title">${p.title}</h3>
+                        <p class="edit" data-path="produtos/${idx}/ingredientes">${p.ingredientes}</p>
+                        <span class="preco">R$ <span class="edit" data-path="produtos/${idx}/price">${p.price.toFixed(2)}</span></span>
                     </div>
-                `;
+                    <div class="foto-p"><img src="${p.image}"></div>
+                </div>`;
             });
         }
 
-        // SISTEMA DE LOGIN ADMIN DENTRO DO SITE
-        function fazerLoginAdmin() {
-            const pass = prompt("Senha do Admin:");
-            if (pass === dadosLoja.config.senhaAdmin) {
-                alert("Modo editor ativado! Altere os textos e clique fora para salvar.");
-                ativarEditor();
-            } else {
-                alert("Acesso negado.");
+        function addCarrinho(idx) {
+            const p = dadosLoja.produtos[idx];
+            carrinho.push(p);
+            atualizarBarraCarrinho();
+        }
+
+        function atualizarBarraCarrinho() {
+            const total = carrinho.reduce((sum, i) => sum + i.price, 0);
+            document.getElementById('cart-qtd').innerText = carrinho.length;
+            document.getElementById('cart-total').innerText = `R$ ${total.toFixed(2)}`;
+        }
+
+        function abrirModalCarrinho() {
+            if(carrinho.length === 0) return alert("Carrinho vazio!");
+            const lista = document.getElementById('itens-carrinho-lista');
+            lista.innerHTML = carrinho.map(i => `<div>${i.title} - <b>R$ ${i.price.toFixed(2)}</b></div>`).join("");
+            document.getElementById('modal-carrinho').style.display = 'flex';
+        }
+
+        async function finalizarPedido() {
+            const nome = document.getElementById('cliente-nome').value;
+            const end = document.getElementById('cliente-end').value;
+            if(!nome || !end) return alert("Preencha nome e endereço!");
+
+            const total = carrinho.reduce((sum, i) => sum + i.price, 0);
+            const resumo = carrinho.map(i => i.title).join(", ");
+            
+            // 1. Salva pedido no Firebase para o dono ver no painel
+            await db.ref(`pedidos/${LOJA_ID}`).push({
+                cliente: nome, endereco: end, itens: resumo, total: total, status: 'novo'
+            });
+
+            // 2. Envia para o WhatsApp da loja específica
+            const msg = `*Novo Pedido!*%0A*Cliente:* ${nome}%0A*Itens:* ${resumo}%0A*Total:* R$ ${total.toFixed(2)}%0A*Endereço:* ${end}`;
+            window.open(`https://wa.me/${dadosLoja.config.whatsapp}?text=${msg}`);
+        }
+
+        // --- SISTEMA ADMIN ---
+        function loginAdmin() {
+            const pass = prompt("Senha Administrativa:");
+            if(pass === dadosLoja.config.senhaAdmin) {
+                document.getElementById('area-admin').style.display = 'block';
+                ativarEdicao();
             }
         }
 
-        function ativarEditor() {
-            document.querySelectorAll('.editavel').forEach(el => {
+        function ativarEdicao() {
+            document.querySelectorAll('.edit').forEach(el => {
                 el.contentEditable = true;
+                el.onclick = (e) => e.stopPropagation(); // Não add no carrinho ao editar
                 el.onblur = async () => {
                     const path = el.getAttribute('data-path');
-                    let novoValor = el.innerText;
-                    
-                    // Se for preço, converte para número
-                    if(path.includes('price')) novoValor = parseFloat(novoValor.replace('R$', '').trim());
-
-                    await db.ref(`restaurantes/${LOJA_ID}/${path}`).set(novoValor);
-                    console.log("Salvo no Firebase!");
+                    let val = el.innerText;
+                    if(path.includes('price')) val = parseFloat(val);
+                    await db.ref(`restaurantes/${LOJA_ID}/${path}`).set(val);
                 };
             });
         }
 
-        window.onload = carregarSaaS;
+        async function adicionarNovoProduto() {
+            const p = { title: "Nome do Produto", ingredientes: "Ingredientes...", price: 0.00, image: "https://via.placeholder.com/70" };
+            const lista = dadosLoja.produtos || [];
+            lista.push(p);
+            await db.ref(`restaurantes/${LOJA_ID}/produtos`).set(lista);
+            location.reload();
+        }
+
+        async function abrirPainelPedidos() {
+            const snap = await db.ref(`pedidos/${LOJA_ID}`).limitToLast(10).once('value');
+            const pedidos = snap.val();
+            const lista = document.getElementById('lista-pedidos-admin');
+            lista.innerHTML = "";
+            for(let id in pedidos) {
+                const p = pedidos[id];
+                lista.innerHTML += `<div style="border-bottom:1px solid #eee; padding:10px;">
+                    <b>${p.cliente}</b> - R$ ${p.total.toFixed(2)}<br><small>${p.itens}</small>
+                </div>`;
+            }
+            document.getElementById('modal-pedidos').style.display = 'flex';
+        }
+
+        function fecharModais() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
+
+        window.onload = carregarDados;
     </script>
 </body>
 </html>
