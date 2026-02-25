@@ -24,7 +24,7 @@
         /* HEADER */
         header { padding: 30px 20px; background: white; border-bottom: 1px solid #eee; text-align: center; }
         .header-content { max-width: 800px; margin: 0 auto; position: relative; }
-        #loja-logo { width: 90px; height: 90px; border-radius: 20px; object-fit: cover; background: #f0f0f0; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; }
+        #loja-logo { width: 90px; height: 90px; border-radius: 20px; object-fit: cover; background: #f0f0f0; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; border: 2px solid transparent; }
         #nome-loja { font-size: 1.4rem; font-weight: 700; color: var(--dark); }
         .user-access { position: absolute; right: 0; top: 0; background: #f4f4f4; border: none; width: 45px; height: 45px; border-radius: 12px; color: #888; cursor: pointer; }
 
@@ -48,8 +48,8 @@
 
         /* MODO ADMIN INTERNO */
         .admin-box { display: none; background: #f4f4f4; padding: 15px; border-radius: 10px; border: 1px solid #ddd; margin-top: 10px; }
-        .admin-box label { font-size: 10px; font-weight: bold; color: #555; display: block; margin-top: 5px; }
-        .admin-box select, .admin-box input { width: 100%; padding: 8px; margin: 5px 0; border-radius: 5px; border: 1px solid #ccc; font-size: 12px; }
+        .admin-box label { font-size: 10px; font-weight: bold; color: #555; display: block; margin-top: 5px; text-transform: uppercase; }
+        .admin-box select, .admin-box input { width: 100%; padding: 10px; margin: 5px 0; border-radius: 5px; border: 1px solid #ccc; font-size: 12px; }
         .show-admin { display: block !important; }
 
         /* CARRINHO FIXO */
@@ -109,6 +109,7 @@
         function render() {
             document.getElementById('nome-loja').innerText = dadosLoja.config.nomeLoja;
             document.getElementById('loja-logo').src = dadosLoja.config.logo;
+            if(modoEdicao) document.getElementById('loja-logo').style.border = "2px dashed var(--primary)";
 
             const corpo = document.getElementById('cardapio-corpo');
             const nav = document.getElementById('cat-nav');
@@ -132,19 +133,21 @@
                                     <div class="prod-price">R$ <span contenteditable="${modoEdicao}" onblur="updateLocal(${i}, 'price', this.innerText)">${parseFloat(p.price).toFixed(2)}</span></div>
                                     
                                     <div class="admin-box ${modoEdicao ? 'show-admin' : ''}">
-                                        <label>CATEGORIA:</label>
+                                        <label>Categoria do Produto:</label>
                                         <select onchange="updateLocal(${i}, 'categoria', this.value)">
                                             ${categorias.map(c => `<option value="${c}" ${c === cat ? 'selected' : ''}>${c}</option>`).join('')}
                                         </select>
                                         
-                                        <label>LINK DA FOTO (.jpg, .png):</label>
+                                        <label>Link da Imagem do Google ou Internet:</label>
                                         <input type="text" value="${p.image}" onchange="updateLocal(${i}, 'image', this.value)" placeholder="Cole o link da foto aqui">
                                         
-                                        <button onclick="removerItem(${i})" style="width:100%; color:red; margin-top:10px; background:none; border:none; cursor:pointer; font-size:11px">EXCLUIR ITEM</button>
+                                        <button onclick="removerItem(${i})" style="width:100%; color:red; margin-top:10px; background:none; border:none; cursor:pointer; font-size:11px; font-weight:bold">
+                                            <i class="fa fa-trash"></i> EXCLUIR PRODUTO
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="prod-img">
-                                    <img src="${p.image}" onerror="this.src='https://via.placeholder.com/150'">
+                                    <img src="${p.image}" onerror="this.src='https://via.placeholder.com/150?text=Link+Invalido'">
                                 </div>
                             </div>
                         `;
@@ -156,7 +159,7 @@
         function updateLocal(index, campo, valor) {
             if(campo === 'price') valor = valor.replace(',', '.');
             dadosLoja.produtos[index][campo] = valor;
-            // Se mudou a imagem no input, atualiza o visual imediatamente
+            // Se for imagem, renderiza para testar o link na hora
             if(campo === 'image') render();
         }
 
@@ -164,13 +167,13 @@
             try {
                 dadosLoja.config.nomeLoja = document.getElementById('nome-loja').innerText;
                 await db.ref(`lojas/${LOJA_ID}`).set(dadosLoja);
-                alert("✅ Salvo com sucesso!");
+                alert("✅ Tudo salvo no Firebase!");
                 location.reload();
             } catch (e) { alert("Erro ao salvar!"); }
         }
 
         function ativarAdmin() {
-            const p = prompt("Senha:");
+            const p = prompt("Senha do Admin:");
             if(p === dadosLoja.config.senhaAdmin) {
                 modoEdicao = true;
                 document.getElementById('area-admin').style.display = 'block';
@@ -181,7 +184,7 @@
 
         function trocarLogoPorLink() {
             if(!modoEdicao) return;
-            const novo = prompt("Cole o link da nova LOGO:", dadosLoja.config.logo);
+            const novo = prompt("Cole o link da nova LOGO (imagem):", dadosLoja.config.logo);
             if(novo) {
                 dadosLoja.config.logo = novo;
                 render();
@@ -193,11 +196,11 @@
             if(nome) {
                 if(!dadosLoja.produtos) dadosLoja.produtos = [];
                 dadosLoja.produtos.push({
-                    title: "Novo Item",
-                    ingredientes: "Descrição...",
+                    title: "Produto Exemplo",
+                    ingredientes: "Edite a descrição",
                     price: "0.00",
                     categoria: nome,
-                    image: "https://via.placeholder.com/150"
+                    image: "https://via.placeholder.com/150?text=Sua+Foto+Aqui"
                 });
                 render();
             }
@@ -207,16 +210,16 @@
             if(!dadosLoja.produtos) dadosLoja.produtos = [];
             dadosLoja.produtos.push({
                 title: "Novo Lanche",
-                ingredientes: "Ingredientes...",
+                ingredientes: "Pão, carne, queijo...",
                 price: "0.00",
                 categoria: "Geral",
-                image: "https://via.placeholder.com/150"
+                image: "https://via.placeholder.com/150?text=Sua+Foto+Aqui"
             });
             render();
         }
 
         function removerItem(i) {
-            if(confirm("Excluir produto?")) {
+            if(confirm("Deseja realmente excluir este item?")) {
                 dadosLoja.produtos.splice(i, 1);
                 render();
             }
