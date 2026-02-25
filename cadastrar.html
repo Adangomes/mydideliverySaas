@@ -1,1 +1,92 @@
 
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Mestre - Criar Nova Loja</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        h2 { margin-bottom: 20px; color: #333; text-align: center; }
+        input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; }
+        button:hover { background: #219150; }
+        .link-gerado { margin-top: 20px; padding: 10px; background: #e8f5e9; border-radius: 8px; font-size: 12px; display: none; word-break: break-all; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Criar Novo Cliente</h2>
+        <input type="text" id="id-loja" placeholder="ID da Lo.ja (ex: snoop_lanche)">
+        <input type="text" id="nome-loja" placeholder="Nome Fantasia (ex: Snoop Lanche)">
+        <input type="text" id="whatsapp" placeholder="WhatsApp (ex: 5547992745867)">
+        <input type="text" id="senha" placeholder="Senha do Dono da Loja">
+        <button onclick="gerarLoja()">CRIAR SISTEMA AGORA</button>
+        
+        <div id="resultado" class="link-gerado"></div>
+    </div>
+
+    <script>
+        // COLOQUE AQUI AS SUAS CHAVES DO FIREBASE (myproject26)
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "myproject26-10f0e.firebaseapp.com",
+            databaseURL: "https://myproject26-10f0e-default-rtdb.firebaseio.com",
+            projectId: "myproject26-10f0e",
+            storageBucket: "myproject26-10f0e.appspot.com",
+            messagingSenderId: "ID",
+            appId: "APP_ID"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        async function gerarLoja() {
+            const id = document.getElementById('id-loja').value.toLowerCase().replace(/\s/g, '_');
+            const nome = document.getElementById('nome-loja').value;
+            const zap = document.getElementById('whatsapp').value;
+            const pass = document.getElementById('senha').value;
+
+            if(!id || !nome || !zap || !pass) return alert("Preencha tudo!");
+
+            const novaEstrutura = {
+                config: {
+                    nomeLoja: nome,
+                    whatsapp: zap,
+                    senhaAdmin: pass,
+                    logo: "https://via.placeholder.com/150",
+                    taxaBase: 5.00,
+                    valorKm: 1.50,
+                    coords: [-49.02, -26.46] 
+                },
+                produtos: [
+                    {
+                        title: "Primeiro Produto",
+                        ingredientes: "Clique aqui para editar a descrição",
+                        price: 0.00,
+                        image: "https://via.placeholder.com/100"
+                    }
+                ]
+            };
+
+            try {
+                // SALVA NA PASTA 'lojas' QUE VOCÊ JÁ TEM
+                await db.ref(`lojas/${id}`).set(novaEstrutura);
+                
+                const link = `https://mydii.netlify.app/?loja=${id}`;
+                const resDiv = document.getElementById('resultado');
+                resDiv.style.display = 'block';
+                resDiv.innerHTML = `<strong>Sucesso!</strong><br>Link do Cliente: <a href="${link}" target="_blank">${link}</a><br><br>Passe a senha <b>${pass}</b> para ele editar o cardápio.`;
+                
+                alert("Sistema criado com sucesso!");
+            } catch (e) {
+                alert("Erro: " + e.message);
+            }
+        }
+    </script>
+</body>
+</html>
