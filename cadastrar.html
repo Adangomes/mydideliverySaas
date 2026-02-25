@@ -27,7 +27,7 @@
         .loja-info b { color: var(--primary); font-size: 1.1rem; }
         .resumo-financeiro { background: #f9f9f9; padding: 15px; border-radius: 10px; margin-top: 10px; display: none; border-left: 5px solid var(--info); }
         .financeiro-item { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9rem; }
-        .total-cobrar { font-weight: bold; color: var(--danger); font-size: 1rem; border-top: 1px solid #ddd; pt: 5px; }
+        .total-cobrar { font-weight: bold; color: var(--danger); font-size: 1rem; border-top: 1px solid #ddd; padding-top: 5px; }
         .btn-mini { padding: 8px 12px; border-radius: 5px; border: none; cursor: pointer; color: white; font-size: 0.8rem; }
     </style>
 </head>
@@ -81,43 +81,47 @@
     const db = firebase.database();
 
     function listarLojas() {
+        // Correção: Lendo diretamente do nó 'lojas'
         db.ref('lojas').on('value', (snap) => {
             const listaDiv = document.getElementById('render-lista');
             listaDiv.innerHTML = "";
             const lojas = snap.val();
-            if(!lojas) return listaDiv.innerHTML = "<p>Nenhum restaurante ativo.</p>";
+            
+            if(!lojas) {
+                listaDiv.innerHTML = "<p style='text-align:center;'>Nenhum restaurante encontrado.</p>";
+                return;
+            }
 
             for(let id in lojas) {
-                const config = lojas[id].config;
+                const config = lojas[id].config || {};
                 const pedidos = lojas[id].pedidos || {};
                 
-                // Cálculo de Vendas (Filtrando pedidos finalizados no mês atual)
                 let totalVendasMes = 0;
+                // Soma apenas o subtotal dos produtos de cada pedido
                 for(let pId in pedidos) {
                     const p = pedidos[pId];
-                    // Considera pedidos com subtotal (sem taxa de entrega)
                     totalVendasMes += parseFloat(p.subtotal || 0);
                 }
 
-                const taxaSistema = totalVendasMes * 0.10; // Taxa de 10%
+                const taxaSistema = totalVendasMes * 0.10; // 10% de comissão
 
                 listaDiv.innerHTML += `
                     <div class="loja-item">
                         <div class="loja-header">
                             <div class="loja-info">
-                                <b>${config.nomeLoja}</b>
-                                <span style="font-size:0.7rem; color:#888;">ID: ${id}</span>
+                                <b>${config.nomeLoja || id}</b>
+                                <span style="font-size:0.7rem; color:#888; display:block;">ID: ${id}</span>
                             </div>
                             <div class="actions">
-                                <button class="btn-mini" style="background:var(--info)" onclick="toggleFinanceiro('${id}')"><i class="fa fa-dollar-sign"></i></button>
-                                <button class="btn-mini" style="background:var(--warning)" onclick="carregarParaEditar('${id}')"><i class="fa fa-edit"></i></button>
-                                <button class="btn-mini" style="background:var(--danger)" onclick="excluirLoja('${id}')"><i class="fa fa-trash"></i></button>
+                                <button class="btn-mini" title="Ver Financeiro" style="background:var(--info)" onclick="toggleFinanceiro('${id}')"><i class="fa fa-dollar-sign"></i></button>
+                                <button class="btn-mini" title="Editar" style="background:var(--warning)" onclick="carregarParaEditar('${id}')"><i class="fa fa-edit"></i></button>
+                                <button class="btn-mini" title="Excluir" style="background:var(--danger)" onclick="excluirLoja('${id}')"><i class="fa fa-trash"></i></button>
                             </div>
                         </div>
                         <div id="fin-${id}" class="resumo-financeiro">
                             <div class="financeiro-item"><span>Total em Vendas (Produtos):</span> <b>R$ ${totalVendasMes.toFixed(2)}</b></div>
                             <div class="financeiro-item"><span>Taxa do Sistema (10%):</span> <b>R$ ${taxaSistema.toFixed(2)}</b></div>
-                            <div class="financeiro-item" style="color:#888; font-size:0.7rem;">* Taxas de entrega do motoboy não inclusas no cálculo.</div>
+                            <div class="financeiro-item" style="color:#888; font-size:0.7rem;">* Taxa de entrega do motoboy não incluída.</div>
                             <div class="financeiro-item total-cobrar"><span>VALOR A COBRAR:</span> <span>R$ ${taxaSistema.toFixed(2)}</span></div>
                         </div>
                     </div>
@@ -127,59 +131,4 @@
     }
 
     async function salvarLoja() {
-        const id = document.getElementById('id').value.toLowerCase().replace(/\s/g, '_').trim();
-        if(!id) return alert("ID obrigatório!");
-        const snap = await db.ref(`lojas/${id}`).once('value');
-        const existe = snap.val();
-        const payload = {
-            config: {
-                nomeLoja: document.getElementById('nome').value,
-                whatsapp: document.getElementById('zap').value,
-                rua: document.getElementById('rua').value,
-                lat: document.getElementById('lat').value,
-                lon: document.getElementById('lon').value,
-                valorKm: parseFloat(document.getElementById('km').value) || 0,
-                senhaAdmin: document.getElementById('pass').value,
-                logo: existe ? existe.config.logo : "https://via.placeholder.com/150"
-            },
-            produtos: existe ? existe.produtos : []
-        };
-        await db.ref(`lojas/${id}`).update(payload);
-        alert("Salvo com sucesso!");
-        limparCampos();
-    }
-
-    async function excluirLoja(id) {
-        if(confirm(`EXCLUIR PERMANENTEMENTE? O restaurante ${id} e sua URL deixarão de existir agora!`)) {
-            await db.ref(`lojas/${id}`).remove();
-            alert("Restaurante e dados removidos do Firebase!");
-        }
-    }
-
-    function toggleFinanceiro(id) {
-        const div = document.getElementById(`fin-${id}`);
-        div.style.display = div.style.display === 'block' ? 'none' : 'block';
-    }
-
-    async function carregarParaEditar(id) {
-        const snap = await db.ref(`lojas/${id}`).once('value');
-        const l = snap.val().config;
-        document.getElementById('id').value = id;
-        document.getElementById('nome').value = l.nomeLoja;
-        document.getElementById('zap').value = l.whatsapp;
-        document.getElementById('rua').value = l.rua;
-        document.getElementById('lat').value = l.lat;
-        document.getElementById('lon').value = l.lon;
-        document.getElementById('km').value = l.valorKm;
-        document.getElementById('pass').value = l.senhaAdmin;
-        window.scrollTo(0,0);
-    }
-
-    function limparCampos() {
-        document.querySelectorAll('input').forEach(i => i.value = "");
-    }
-
-    window.onload = listarLojas;
-</script>
-</body>
-</html>
+        const id = document.getElementById('id').value.toLowerCase().replace(/\s/
