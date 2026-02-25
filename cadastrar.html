@@ -2,26 +2,26 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Painel Mestre - Cadastro SaaS</title>
+    <title>Cadastro SaaS - Master</title>
     <style>
-        body { font-family: sans-serif; background: #eee; padding: 20px; }
-        .box { background: white; padding: 20px; max-width: 500px; margin: auto; border-radius: 10px; }
-        input { width: 100%; padding: 10px; margin: 5px 0; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background: #27ae60; color: white; border: none; cursor: pointer; }
+        body { font-family: sans-serif; background: #2c3e50; color: white; padding: 40px; }
+        .box { background: white; color: #333; padding: 30px; border-radius: 15px; max-width: 450px; margin: auto; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background: #27ae60; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
     <div class="box">
-        <h2>Cadastrar Restaurante</h2>
-        <input type="text" id="id" placeholder="ID da Loja (ex: snoop_lanche)">
-        <input type="text" id="nome" placeholder="Nome Fantasia">
-        <input type="text" id="zap" placeholder="WhatsApp (55...)">
-        <input type="text" id="rua" placeholder="Endereço (Rua, Número, Bairro)">
-        <input type="text" id="lat" placeholder="Latitude (ex: -26.46)">
-        <input type="text" id="lon" placeholder="Longitude (ex: -49.02)">
-        <input type="text" id="valorKm" placeholder="Valor por KM de Frete (ex: 1.50)">
-        <input type="text" id="senha" placeholder="Senha do Dono">
-        <button onclick="criar()">CRIAR SISTEMA AGORA</button>
+        <h2>Novo Restaurante</h2>
+        <input type="text" id="id" placeholder="ID da URL (ex: snoop_lanche)">
+        <input type="text" id="nome" placeholder="Nome do Restaurante">
+        <input type="text" id="zap" placeholder="WhatsApp (5547...)">
+        <input type="text" id="rua" placeholder="Endereço Completo">
+        <input type="text" id="lat" placeholder="Latitude (ex: -26.4842)">
+        <input type="text" id="lon" placeholder="Longitude (ex: -49.0843)">
+        <input type="text" id="km" placeholder="Valor por KM (ex: 1.50)">
+        <input type="text" id="pass" placeholder="Senha do Painel do Dono">
+        <button onclick="salvar()">CRIAR SISTEMA</button>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -39,23 +39,23 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        async function criar() {
-            const id = document.getElementById('id').value;
-            const dados = {
+        async function salvar() {
+            const id = document.getElementById('id').value.toLowerCase();
+            const payload = {
                 config: {
                     nomeLoja: document.getElementById('nome').value,
                     whatsapp: document.getElementById('zap').value,
                     rua: document.getElementById('rua').value,
                     lat: document.getElementById('lat').value,
                     lon: document.getElementById('lon').value,
-                    valorKm: parseFloat(document.getElementById('valorKm').value),
-                    senhaAdmin: document.getElementById('senha').value,
+                    valorKm: parseFloat(document.getElementById('km').value),
+                    senhaAdmin: document.getElementById('pass').value,
                     logo: "https://via.placeholder.com/150"
                 },
-                produtos: [{title: "Produto Exemplo", ingredientes: "Descrição", price: 10.00, image: "https://via.placeholder.com/100"}]
+                produtos: [{title: "Produto Inicial", ingredientes: "Descrição aqui", price: 20.00, image: "https://via.placeholder.com/150"}]
             };
-            await db.ref(`lojas/${id}`).set(dados);
-            alert("Criado! Link: https://mydii.netlify.app/?loja=" + id);
+            await db.ref(`lojas/${id}`).set(payload);
+            alert("Loja Criada! Link: https://mydii.netlify.app/?loja=" + id);
         }
     </script>
 </body>
