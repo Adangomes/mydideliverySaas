@@ -12,67 +12,80 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
 
     <style>
-        :root { --primary: #e74c3c; --dark: #2c3e50; --success: #27ae60; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: #fff; padding-bottom: 100px; }
+        :root { --primary: #e74c3c; --dark: #2c3e50; --success: #27ae60; --light: #f8f9fa; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; scroll-behavior: smooth; }
+        body { background: #fff; color: #333; padding-bottom: 120px; }
 
-        /* PAINEL ADMIN */
-        .area-admin { display: none; background: #1a252f; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1100; color: white; }
-        .btn-adm { padding: 8px 15px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; margin: 5px; }
+        /* PAINEL ADMIN SUPERIOR */
+        .area-admin { display: none; background: #1a252f; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 2000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .btn-adm { padding: 10px 15px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; margin: 5px; font-size: 12px; transition: 0.3s; }
+        .btn-save { background: white; color: #1a252f; border: 2px solid var(--success); }
+        .btn-save:hover { background: var(--success); color: white; }
 
-        header { padding: 25px 20px; border-bottom: 1px solid #eee; background: white; text-align: center; }
-        .header-content { max-width: 800px; margin: 0 auto; position: relative; display: flex; flex-direction: column; align-items: center; }
-        #loja-logo { width: 80px; height: 80px; border-radius: 20px; object-fit: cover; background: #f0f0f0; margin-bottom: 10px; }
-        .user-access { position: absolute; right: 0; top: 0; background: #f4f4f4; border: none; width: 40px; height: 40px; border-radius: 10px; color: #888; cursor: pointer; }
+        /* HEADER */
+        header { padding: 30px 20px; background: white; border-bottom: 1px solid #eee; text-align: center; }
+        .header-content { max-width: 800px; margin: 0 auto; position: relative; }
+        #loja-logo { width: 90px; height: 90px; border-radius: 20px; object-fit: cover; background: #f0f0f0; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; }
+        #nome-loja { font-size: 1.4rem; font-weight: 700; color: var(--dark); }
+        .user-access { position: absolute; right: 0; top: 0; background: #f4f4f4; border: none; width: 45px; height: 45px; border-radius: 12px; color: #888; cursor: pointer; }
 
-        .categorias-nav { display: flex; overflow-x: auto; padding: 15px; gap: 10px; background: #fff; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 999; }
-        .cat-item { background: #f4f4f4; padding: 8px 20px; border-radius: 25px; font-size: 14px; font-weight: 600; color: #666; text-decoration: none; white-space: nowrap; }
+        /* NAVEGAÇÃO DE CATEGORIAS */
+        .categorias-nav { display: flex; overflow-x: auto; padding: 15px; gap: 12px; background: #fff; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 1000; }
+        .categorias-nav::-webkit-scrollbar { display: none; }
+        .cat-item { background: var(--light); padding: 8px 22px; border-radius: 25px; font-size: 14px; font-weight: 600; color: #666; text-decoration: none; white-space: nowrap; transition: 0.3s; }
+        .cat-item:hover { background: #ddd; }
 
-        .container { max-width: 800px; margin: 0 auto; padding: 15px; }
-        .section-title { font-size: 1.2rem; font-weight: 700; margin: 25px 0 15px; color: var(--dark); border-left: 4px solid var(--primary); padding-left: 10px; }
+        /* LISTA DE PRODUTOS */
+        .container { max-width: 800px; margin: 0 auto; padding: 10px 20px; }
+        .section-title { font-size: 1.2rem; font-weight: 700; margin: 30px 0 15px; color: var(--dark); padding-left: 10px; border-left: 5px solid var(--primary); }
         
-        .card-produto { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #f9f9f9; align-items: center; }
-        .prod-info { flex: 1; padding-right: 15px; }
-        .prod-info h3 { font-size: 1rem; color: #333; }
-        .prod-info p { font-size: 0.85rem; color: #888; margin: 5px 0; }
-        .prod-price { font-weight: 700; color: var(--dark); }
+        .card-produto { display: flex; justify-content: space-between; padding: 20px 0; border-bottom: 1px solid #f2f2f2; align-items: flex-start; gap: 15px; }
+        .prod-info { flex: 1; }
+        .prod-info h3 { font-size: 1rem; color: #333; margin-bottom: 5px; }
+        .prod-info p { font-size: 0.85rem; color: #777; line-height: 1.4; margin-bottom: 10px; }
+        .prod-price { font-weight: 700; color: var(--dark); font-size: 1rem; }
 
-        .prod-img img { width: 100px; height: 100px; border-radius: 15px; object-fit: cover; background: #f9f9f9; }
+        .prod-img img { width: 110px; height: 110px; border-radius: 18px; object-fit: cover; background: #f9f9f9; }
 
-        /* EDIÇÃO */
-        .admin-only { display: none; margin-top: 10px; background: #f9f9f9; padding: 10px; border-radius: 8px; border: 1px solid #ddd; }
-        .edit-active { display: block !important; }
+        /* MODO ADMIN INTERNO */
+        .admin-box { display: none; background: #f9f9f9; padding: 12px; border-radius: 10px; border: 1px dashed #ccc; margin-top: 10px; }
+        .admin-box select, .admin-box input { width: 100%; padding: 8px; margin: 5px 0; border-radius: 5px; border: 1px solid #ddd; }
+        .show-admin { display: block !important; }
 
-        #btn-carrinho { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 450px; background: var(--primary); color: white; padding: 18px; border-radius: 50px; display: flex; justify-content: space-between; font-weight: bold; box-shadow: 0 10px 20px rgba(0,0,0,0.1); cursor: pointer; }
+        /* CARRINHO FIXO */
+        #footer-cart { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 500px; background: var(--primary); color: white; padding: 18px 25px; border-radius: 50px; display: flex; justify-content: space-between; font-weight: bold; box-shadow: 0 10px 30px rgba(231, 76, 60, 0.4); cursor: pointer; z-index: 1500; }
     </style>
 </head>
 <body>
 
     <div id="area-admin" class="area-admin">
-        <button class="btn-adm" style="background:var(--success); color:white" onclick="novoProduto()">+ Produto</button>
-        <button class="btn-adm" style="background:#3498db; color:white" onclick="novaCategoria()">+ Nova Categoria</button>
-        <button class="btn-adm" style="background:white; color:black" onclick="salvarTudo()">SALVAR TUDO</button>
+        <button class="btn-adm" style="background:var(--success); color:white" onclick="novoProduto()">+ NOVO PRODUTO</button>
+        <button class="btn-adm" style="background:#3498db; color:white" onclick="novaCategoria()">+ NOVA CATEGORIA</button>
+        <button class="btn-adm btn-save" onclick="salvarGeral()">💾 SALVAR TUDO</button>
         <input type="file" id="upload-file" style="display:none" onchange="processarUpload(event)">
     </div>
 
     <header>
         <div class="header-content">
-            <img id="loja-logo" onclick="acionarUpload('logo')" src="" alt="Logo">
-            <h1 id="nome-loja">Carregando...</h1>
-            <button class="user-access" onclick="loginAdmin()"><i class="fa fa-user-circle"></i></button>
+            <img id="loja-logo" onclick="acionarUpload('logo')" src="https://via.placeholder.com/100" alt="Logo">
+            <h1 id="nome-loja" contenteditable="false">Carregando...</h1>
+            <button class="user-access" onclick="entrarModoAdmin()"><i class="fa fa-user-circle"></i></button>
         </div>
     </header>
 
     <div class="categorias-nav" id="cat-nav"></div>
 
-    <main class="container" id="lista-produtos"></main>
+    <main class="container" id="cardapio-corpo">
+        <p style="text-align:center; padding:50px;">Buscando produtos...</p>
+    </main>
 
-    <div id="btn-carrinho">
+    <div id="footer-cart">
         <span>🛒 <span id="cart-count">0</span> Itens</span>
         <span id="cart-total">R$ 0,00</span>
     </div>
 
     <script>
+        // CONFIGURAÇÃO FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyCXA1yP1F-riNkzOX5zJs5gsQ82EzsT7Qg",
             authDomain: "myproject26-10f0e.firebaseapp.com",
@@ -89,52 +102,58 @@
         const LOJA_ID = new URLSearchParams(window.location.search).get('loja');
         let dadosLoja = null;
         let modoEdicao = false;
-        let uploadRef = null;
+        let targetUpload = null;
 
         async function init() {
-            if(!LOJA_ID) return document.body.innerHTML = "ID da loja ausente.";
+            if(!LOJA_ID) return alert("Erro: ID da loja não encontrado na URL (?loja=NOME)");
+            
             db.ref(`lojas/${LOJA_ID}`).on('value', snap => {
                 dadosLoja = snap.val();
-                render();
+                if(dadosLoja) render();
             });
         }
 
         function render() {
             document.getElementById('nome-loja').innerText = dadosLoja.config.nomeLoja;
-            document.getElementById('loja-logo').src = dadosLoja.config.logo;
+            document.getElementById('loja-logo').src = dadosLoja.config.logo || 'https://via.placeholder.com/100';
 
-            const container = document.getElementById('lista-produtos');
+            const corpo = document.getElementById('cardapio-corpo');
             const nav = document.getElementById('cat-nav');
-            container.innerHTML = "";
+            corpo.innerHTML = "";
             nav.innerHTML = "";
 
             const produtos = dadosLoja.produtos || [];
-            // Lista única de categorias para o filtro e para o select de edição
             const categorias = [...new Set(produtos.map(p => p.categoria || "Geral"))];
 
             categorias.forEach(cat => {
+                // Nav
                 nav.innerHTML += `<a href="#${cat}" class="cat-item">${cat}</a>`;
-                container.innerHTML += `<div class="section-title" id="${cat}">${cat}</div>`;
+                // Titulo da Seção
+                corpo.innerHTML += `<div class="section-title" id="${cat}">${cat}</div>`;
 
                 produtos.forEach((p, i) => {
                     if((p.categoria || "Geral") === cat) {
-                        container.innerHTML += `
+                        corpo.innerHTML += `
                             <div class="card-produto">
                                 <div class="prod-info">
-                                    <h3 contenteditable="${modoEdicao}" onblur="editLocal(${i}, 'title', this.innerText)">${p.title}</h3>
-                                    <p contenteditable="${modoEdicao}" onblur="editLocal(${i}, 'ingredientes', this.innerText)">${p.ingredientes}</p>
-                                    <div class="prod-price">R$ <span contenteditable="${modoEdicao}" onblur="editLocal(${i}, 'price', this.innerText)">${parseFloat(p.price).toFixed(2)}</span></div>
+                                    <h3 contenteditable="${modoEdicao}" onblur="updateMemoria(${i}, 'title', this.innerText)">${p.title}</h3>
+                                    <p contenteditable="${modoEdicao}" onblur="updateMemoria(${i}, 'ingredientes', this.innerText)">${p.ingredientes}</p>
+                                    <div class="prod-price">R$ <span contenteditable="${modoEdicao}" onblur="updateMemoria(${i}, 'price', this.innerText)">${parseFloat(p.price).toFixed(2)}</span></div>
                                     
-                                    <div class="admin-only ${modoEdicao ? 'edit-active' : ''}">
-                                        <label>Mover para:</label>
-                                        <select onchange="editLocal(${i}, 'categoria', this.value)">
+                                    <div class="admin-box ${modoEdicao ? 'show-admin' : ''}">
+                                        <label style="font-size:10px; font-weight:bold">CATEGORIA:</label>
+                                        <select onchange="updateMemoria(${i}, 'categoria', this.value)">
                                             ${categorias.map(c => `<option value="${c}" ${c === cat ? 'selected' : ''}>${c}</option>`).join('')}
                                         </select>
-                                        <button onclick="remover(${i})" style="color:red; margin-left:10px; background:none; border:none; cursor:pointer">Excluir</button>
+                                        <div style="display:flex; gap:5px; margin-top:5px">
+                                            <button onclick="acionarUpload('produto', ${i})" style="flex:1; font-size:10px; padding:5px; background:#333; color:white; border:none; border-radius:4px">NOVA FOTO</button>
+                                            <button onclick="mudarLinkManual(${i})" style="flex:1; font-size:10px; padding:5px; background:#666; color:white; border:none; border-radius:4px">COLAR LINK</button>
+                                        </div>
+                                        <button onclick="removerItem(${i})" style="width:100%; font-size:10px; color:red; margin-top:8px; background:none; border:none; cursor:pointer">EXCLUIR PRODUTO</button>
                                     </div>
                                 </div>
                                 <div class="prod-img">
-                                    <img src="${p.image}" onclick="acionarUpload('produto', ${i})">
+                                    <img src="${p.image}" onerror="this.src='https://via.placeholder.com/150'">
                                 </div>
                             </div>
                         `;
@@ -143,62 +162,109 @@
             });
         }
 
-        function editLocal(index, campo, valor) {
+        // --- FUNÇÕES DE EDIÇÃO ---
+
+        function updateMemoria(index, campo, valor) {
             if(campo === 'price') valor = valor.replace(',', '.');
             dadosLoja.produtos[index][campo] = valor;
         }
 
-        async function salvarTudo() {
-            await db.ref(`lojas/${LOJA_ID}`).update(dadosLoja);
-            alert("Alterações salvas!");
-            location.reload();
+        async function salvarGeral() {
+            try {
+                // Atualiza o nome da loja também se mudou
+                dadosLoja.config.nomeLoja = document.getElementById('nome-loja').innerText;
+                
+                await db.ref(`lojas/${LOJA_ID}`).set(dadosLoja);
+                alert("✅ Alterações salvas no Banco de Dados!");
+                location.reload();
+            } catch (e) {
+                alert("Erro ao salvar: " + e.message);
+            }
         }
 
-        function loginAdmin() {
-            const pass = prompt("Senha Admin:");
-            if(pass === dadosLoja.config.senhaAdmin) {
+        function entrarModoAdmin() {
+            const p = prompt("Senha do Restaurante:");
+            if(p === dadosLoja.config.senhaAdmin) {
                 modoEdicao = true;
                 document.getElementById('area-admin').style.display = 'block';
+                document.getElementById('nome-loja').contentEditable = true;
                 render();
+            } else {
+                alert("Senha incorreta!");
             }
         }
 
-        function novaCategoria() {
-            const nome = prompt("Nome da nova categoria:");
-            if(nome) {
-                if(!dadosLoja.produtos) dadosLoja.produtos = [];
-                // Adiciona um item temporário para criar a categoria
-                dadosLoja.produtos.push({ title: "Novo Item", ingredientes: "Descrição...", price: "0.00", categoria: nome, image: "https://via.placeholder.com/150" });
-                render();
-            }
-        }
-
-        function novoProduto() {
-            if(!dadosLoja.produtos) dadosLoja.produtos = [];
-            dadosLoja.produtos.push({ title: "Novo Lanche", ingredientes: "Ingredientes...", price: "0.00", categoria: "Geral", image: "https://via.placeholder.com/150" });
-            render();
-        }
+        // --- FUNÇÕES DE FOTO ---
 
         function acionarUpload(tipo, index) {
             if(!modoEdicao) return;
-            uploadRef = { tipo, index };
+            targetUpload = { tipo, index };
             document.getElementById('upload-file').click();
         }
 
         async function processarUpload(e) {
             const file = e.target.files[0];
             if(!file) return;
+
+            alert("Subindo foto... aguarde.");
             const ref = storage.ref(`lojas/${LOJA_ID}/${Date.now()}_${file.name}`);
-            await ref.put(file);
-            const url = await ref.getDownloadURL();
-            if(uploadRef.tipo === 'logo') dadosLoja.config.logo = url;
-            else dadosLoja.produtos[uploadRef.index].image = url;
-            render();
-            alert("Imagem carregada! Clique em SALVAR TUDO para confirmar.");
+            
+            try {
+                await ref.put(file);
+                const url = await ref.getDownloadURL();
+
+                if(targetUpload.tipo === 'logo') {
+                    dadosLoja.config.logo = url;
+                } else {
+                    dadosLoja.produtos[targetUpload.index].image = url;
+                }
+                render();
+                alert("Foto carregada! Clique em SALVAR TUDO.");
+            } catch (err) {
+                alert("Erro no Firebase Storage! Tente usar o botão COLAR LINK.");
+            }
         }
 
-        function remover(i) {
-            if(confirm("Excluir este produto?")) {
+        function mudarLinkManual(index) {
+            const link = prompt("Cole o link direto da imagem (URL terminada em .jpg, .png ou .webp):");
+            if(link) {
+                dadosLoja.produtos[index].image = link;
+                render();
+            }
+        }
+
+        // --- GESTÃO DE PRODUTOS/CATEGORIAS ---
+
+        function novaCategoria() {
+            const nome = prompt("Nome da nova categoria (ex: Pizzas Doce, Bebidas 2L):");
+            if(nome) {
+                if(!dadosLoja.produtos) dadosLoja.produtos = [];
+                // Cria um item exemplo para fixar a categoria
+                dadosLoja.produtos.push({
+                    title: "Exemplo da Categoria",
+                    ingredientes: "Edite este item...",
+                    price: "0.00",
+                    categoria: nome,
+                    image: "https://via.placeholder.com/150"
+                });
+                render();
+            }
+        }
+
+        function novoProduto() {
+            if(!dadosLoja.produtos) dadosLoja.produtos = [];
+            dadosLoja.produtos.push({
+                title: "Novo Produto",
+                ingredientes: "Ingredientes e descrição aqui...",
+                price: "0.00",
+                categoria: "Geral",
+                image: "https://via.placeholder.com/150"
+            });
+            render();
+        }
+
+        function removerItem(i) {
+            if(confirm("Tem certeza que deseja excluir este produto?")) {
                 dadosLoja.produtos.splice(i, 1);
                 render();
             }
